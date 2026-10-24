@@ -42,7 +42,8 @@
       "en": "193 Munji-ro, Yuseong-gu, Daejeon 34051, Republic of Korea",
       "ko": "대전광역시 유성구 문지로 193 (34051)"
     },
-    "map_query": "KAIST Munji Campus, 193 Munji-ro, Yuseong-gu, Daejeon",
+    "map_query": "한국과학기술원 문지캠퍼스",
+    "map_embed": "https://www.google.com/maps/embed?pb=!1m5!3m3!1m2!1s0x356549e607904897%3A0xa0eb0d0f8b6ab2a8!2z7ZWc6rWt6rO87ZWZ6riw7Iig7JuQIOusuOyngOy6oO2NvOyKpA!5e0!3m2!1sko!2skr!4v1792837548624!5m2!1sko!2skr",
     "coords": "36.3933°N 127.3998°E"
   },
 
