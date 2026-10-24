@@ -17,7 +17,7 @@ ${urls}
 `;
 }
 
-export const robots = (siteUrl) => `User-agent: *\nAllow: /\nDisallow: /_print/\n\nSitemap: ${siteUrl}/sitemap.xml\n`;
+export const robots = (siteUrl) => `User-agent: *\nAllow: /\nDisallow: /_print/\nDisallow: /preview/\n\nSitemap: ${siteUrl}/sitemap.xml\n`;
 
 export function feed(c, lang, siteUrl, iso) {
   const P = c.profile;
