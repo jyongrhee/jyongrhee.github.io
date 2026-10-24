@@ -5,6 +5,8 @@
 ::view-transition-group(*) { animation-duration: var(--t3); animation-timing-function: var(--ease); }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--t2); }
 ::view-transition-old(bridge), ::view-transition-new(bridge) { animation: none; mix-blend-mode: normal; }
+/* the bar is see-through, so the old one would show under the new one (doubled text): show only the new bar */
+::view-transition-old(bridge) { display: none; }
 
 /* sections settle in as they scroll into view (starts from a visible state) */
 @supports (animation-timeline: view()) {
@@ -43,3 +45,4 @@
 /* theme switch uses its own circular reveal instead of the default crossfade */
 .theming::view-transition-old(root), .theming::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 .theming::view-transition-group(*) { animation: none; }
+.theming .bridge { view-transition-name: none; } /* the bar changes colour inside the same circle as the page */
