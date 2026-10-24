@@ -1,0 +1,61 @@
+[
+  {
+    "id": "hypoxia",
+    "pin": true,
+    "date": "2026-07",
+    "title": {
+      "en": "Predicting coastal hypoxia from satellite data",
+      "ko": "위성 자료로 연안 빈산소수괴 예측하기"
+    },
+    "full_title": {
+      "en": "Time-Lag-Aware Spatio-Temporal Prediction of Coastal Hypoxia Using Machine Learning Models",
+      "ko": "시간지연 효과를 고려한 기계학습 기반 연안 빈산소수괴 발생의 시공간 예측"
+    },
+    "kind": { "en": "B.S. thesis", "ko": "학사 졸업논문" },
+    "summary": {
+      "en": "Hypoxic water forms at the sea floor, where satellites can't see. This work links GOCI and Aqua-MODIS surface observations to the shape and intensity of the hypoxic water mass below, accounting for the time lag of environmental factors.",
+      "ko": "빈산소수괴는 위성이 볼 수 없는 바닥에서 생깁니다. GOCI와 Aqua-MODIS 해수면 관측을 바닥 빈산소수괴의 형태·강도와 연결하고, 환경인자의 시간지연 효과를 반영했습니다."
+    },
+    "tags": ["Remote sensing", "Machine learning", "Coastal environment"],
+    "methods": ["GOCI", "Aqua-MODIS", "Gaussian process regression", "Neural networks", "SMOTE", "MATLAB"],
+    "cover": "",
+    "chapters": [
+      {
+        "title": { "en": "Problem", "ko": "문제" },
+        "text": {
+          "en": "Hypoxic water, low in dissolved oxygen, forms near the sea floor in summer and harms coastal ecosystems and fisheries. It sits where satellites can't see, and ship surveys are sparse in space and time.",
+          "ko": "용존산소가 부족한 빈산소수괴는 여름철 연안 바닥에 생겨 생태계와 수산업에 피해를 줍니다. 위성으로는 보이지 않고, 선박 관측은 시간·공간적으로 드뭅니다."
+        },
+        "figure": { "src": "", "caption": { "en": "Study area", "ko": "연구 해역" } }
+      },
+      {
+        "title": { "en": "Data", "ko": "자료" },
+        "text": {
+          "en": "Surface products from the geostationary GOCI and polar-orbiting Aqua-MODIS satellites, paired with in-situ bottom-water observations.",
+          "ko": "정지궤도 위성 GOCI와 극궤도 위성 Aqua-MODIS의 해수면 자료를 현장 저층 관측 자료와 짝지어 구성했습니다."
+        },
+        "figure": { "src": "", "caption": { "en": "Satellite and in-situ data", "ko": "위성 자료와 현장 관측" } }
+      },
+      {
+        "title": { "en": "Method", "ko": "방법" },
+        "steps": [
+          { "en": "Analyzed the time lag between environmental factors and hypoxia onset", "ko": "환경인자와 빈산소 발생 사이의 시간지연 효과 분석" },
+          { "en": "Rebalanced rare hypoxic cases with SMOTE", "ko": "드문 빈산소 사례를 SMOTE로 증강" },
+          { "en": "Compared Gaussian process regression and neural network models", "ko": "가우시안 프로세스 회귀와 신경망 모델 비교" },
+          { "en": "Predicted both the spatial shape and the intensity of the hypoxic water mass", "ko": "빈산소수괴의 공간 형태와 강도를 함께 예측" }
+        ],
+        "figure": { "src": "", "caption": { "en": "Time-lag analysis", "ko": "시간지연 분석" } }
+      },
+      {
+        "title": { "en": "Result", "ko": "결과" },
+        "text": {
+          "en": "The best model reached about 94% prediction accuracy. The work was presented orally at the 2025 KOSMEE Autumn Conference and received the department's Best Undergraduate Thesis Award.",
+          "ko": "최고 모델의 예측 정확도는 약 94%입니다. 2025 한국해양환경·에너지학회 추계학술대회에서 구두발표했고, 학과 학사학위청구논문 최우수상을 받았습니다."
+        },
+        "figure": { "src": "", "caption": { "en": "Predicted hypoxic water mass", "ko": "빈산소수괴 예측 결과" } }
+      }
+    ],
+    "advisor": { "en": "Prof. Kyunghoi Kim", "ko": "김경회 교수" },
+    "links": []
+  }
+]

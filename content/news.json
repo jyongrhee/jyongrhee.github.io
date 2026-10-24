@@ -1,0 +1,38 @@
+[
+  {
+    "date": "2026-10",
+    "title": {
+      "en": "Launched this website",
+      "ko": "홈페이지 오픈"
+    },
+    "text": {
+      "en": "Papers, awards and updates will live here.",
+      "ko": "논문, 수상, 소식을 여기에 정리합니다."
+    },
+    "image": ""
+  },
+  {
+    "date": "2026-09",
+    "title": {
+      "en": "Admitted to KAIST",
+      "ko": "KAIST 석사과정 합격"
+    },
+    "text": {
+      "en": "M.S. program at the Cho Chun-sik Graduate School of Mobility, starting March 2027.",
+      "ko": "조천식모빌리티대학원 석사과정, 2027년 3월 입학."
+    },
+    "image": ""
+  },
+  {
+    "date": "2026-08",
+    "title": {
+      "en": "Graduated from Pukyong National University",
+      "ko": "국립부경대학교 졸업"
+    },
+    "text": {
+      "en": "B.S. in Ocean Engineering, summa cum laude, early graduation.",
+      "ko": "해양공학과 학사, Summa Cum Laude, 조기졸업."
+    },
+    "image": ""
+  }
+]

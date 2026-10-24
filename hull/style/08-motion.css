@@ -1,0 +1,45 @@
+/* ---------- motion system: one curve, three speeds ---------- */
+
+/* page-to-page transitions (research cards morph into the research page) */
+@view-transition { navigation: auto; }
+::view-transition-group(*) { animation-duration: var(--t3); animation-timing-function: var(--ease); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: var(--t2); }
+::view-transition-old(bridge), ::view-transition-new(bridge) { animation: none; mix-blend-mode: normal; }
+
+/* sections settle in as they scroll into view (starts from a visible state) */
+@supports (animation-timeline: view()) {
+  .hold__head, .logbook, .study, .medal, .ledger__row, .paper, .berth__map, .chapter, .hop {
+    animation: settle linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 32%;
+  }
+}
+@keyframes settle { from { transform: translateY(22px); } to { transform: none; } }
+
+/* load sequence for the surface */
+.js .surface .portrait, .js .ident > * { animation: rise var(--t3) var(--ease) both; }
+.js .ident > :nth-child(1) { animation-delay: 80ms; }
+.js .ident > :nth-child(2) { animation-delay: 160ms; }
+.js .ident > :nth-child(3), .js .ident > :nth-child(4) { animation-delay: 240ms; }
+.js .ident > :nth-child(5) { animation-delay: 320ms; }
+.js .surface__img { animation: settle-photo 1.6s var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+@keyframes settle-photo { from { opacity: 0; transform: scale(1.04); } }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
+  .hold__head, .logbook, .study, .medal, .ledger__row, .paper, .berth__map, .chapter, .hop { animation: none !important; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* print: a clean page without chrome */
+@media print {
+  .bridge, .keel, .helm, .sheet, .loupe, .signal, .progress, .dive__toc, .dive__stage, .hops, .surface__photo, .surface__veil, .hud { display: none !important; }
+  body { background: #fff; color: #000; }
+  .surface { min-height: 0; background: none; color: #000; }
+}
+
+/* theme switch uses its own circular reveal instead of the default crossfade */
+.theming::view-transition-old(root), .theming::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+.theming::view-transition-group(*) { animation: none; }

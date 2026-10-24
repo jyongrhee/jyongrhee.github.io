@@ -1,0 +1,249 @@
+[
+  {
+    "type": "award",
+    "tier": "honor",
+    "date": "2026-08",
+    "title": {
+      "en": "Commendation for Academic Excellence",
+      "ko": "학업우수 표창"
+    },
+    "org": {
+      "en": "Korea Concrete Institute (KCI)",
+      "ko": "한국콘크리트학회"
+    },
+    "image": ""
+  },
+  {
+    "type": "award",
+    "tier": "top",
+    "date": "2026-07",
+    "title": {
+      "en": "Best Undergraduate Thesis Award",
+      "ko": "학사학위청구논문 최우수상"
+    },
+    "org": {
+      "en": "Dept. of Ocean Engineering, Pukyong National University",
+      "ko": "국립부경대학교 해양공학과"
+    },
+    "for": {
+      "en": "Time-Lag-Aware Spatio-Temporal Prediction of Coastal Hypoxia Using Machine Learning Models",
+      "ko": "시간지연 효과를 고려한 기계학습 기반 연안 빈산소수괴 발생의 시공간 예측"
+    },
+    "research": "hypoxia",
+    "image": ""
+  },
+  {
+    "type": "award",
+    "tier": "excellence",
+    "date": "2025-11",
+    "title": {
+      "en": "Excellence Award, Young Scientist Presentation Competition",
+      "ko": "Young Scientist 발표대회 우수상"
+    },
+    "org": {
+      "en": "2025 Autumn Conference, Korean Society for Marine Environment and Energy (KOSMEE)",
+      "ko": "2025 한국해양환경·에너지학회 추계학술대회"
+    },
+    "for": {
+      "en": "Prediction of Coastal Hypoxia Occurrence Using Satellite Data and Machine Learning",
+      "ko": "위성자료와 기계학습을 활용한 연안 빈산소수괴 발생 예측"
+    },
+    "publication": "kosmee-2025",
+    "image": "",
+    "news": true
+  },
+  {
+    "type": "award",
+    "tier": "top",
+    "date": "2025-02",
+    "title": {
+      "en": "Top Excellence Award, 2024 Customized Career Club Program",
+      "ko": "2024 맞춤형 취·창업동아리 최우수상"
+    },
+    "org": {
+      "en": "Pukyong National University",
+      "ko": "국립부경대학교"
+    },
+    "image": ""
+  },
+  {
+    "type": "award",
+    "tier": "honor",
+    "date": "2022-02",
+    "title": {
+      "en": "Commendation, The Face that Shone in School 2021",
+      "ko": "2021 학교를 빛낸 얼굴 표창"
+    },
+    "org": {
+      "en": "Pukyong National University",
+      "ko": "국립부경대학교"
+    },
+    "image": ""
+  },
+  {
+    "type": "award",
+    "tier": "grand",
+    "date": "2021-11",
+    "title": {
+      "en": "KOSID Grand Prize (Busan Mayor's Award)",
+      "ko": "대상 (부산광역시장상)"
+    },
+    "org": {
+      "en": "2nd Busan Architecture Festival Interior Design Photo Competition",
+      "ko": "제2회 부산건축제 실내건축사진전"
+    },
+    "image": ""
+  },
+  {
+    "type": "award",
+    "tier": "honor",
+    "date": "2021-06",
+    "title": {
+      "en": "Innovative Design Award",
+      "ko": "Innovative Design Award"
+    },
+    "org": {
+      "en": "Dept. of Ocean Engineering, Pukyong National University",
+      "ko": "국립부경대학교 해양공학과"
+    },
+    "for": {
+      "en": "GPS-equipped fishing gear to reduce marine pollution",
+      "ko": "해양생태계 오염 저감을 위한 GPS 탑재 어구"
+    },
+    "image": ""
+  },
+  {
+    "type": "award",
+    "tier": "honor",
+    "date": "2021-06",
+    "title": {
+      "en": "OE Design Award",
+      "ko": "OE Design Award"
+    },
+    "org": {
+      "en": "Dept. of Ocean Engineering, Pukyong National University",
+      "ko": "국립부경대학교 해양공학과"
+    },
+    "for": {
+      "en": "GPS-equipped fishing gear to reduce marine pollution",
+      "ko": "해양생태계 오염 저감을 위한 GPS 탑재 어구"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2025",
+    "period": {
+      "en": "2025 – graduation",
+      "ko": "2025 – 졸업"
+    },
+    "title": {
+      "en": "Korea Leadership Development Scholar (Full Scholarship)",
+      "ko": "한국지도자육성장학재단 장학생 (전액)"
+    },
+    "org": {
+      "en": "Korea Leadership Development Foundation",
+      "ko": "한국지도자육성장학재단"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2026-03",
+    "period": {
+      "en": "Feb 2025, Mar 2026",
+      "ko": "2025.02, 2026.03"
+    },
+    "title": {
+      "en": "Yaksu Academic Promotion Scholar",
+      "ko": "약수학술진흥회 장학생"
+    },
+    "org": {
+      "en": "Yaksu Academic Promotion Society, Dept. of Ocean Engineering",
+      "ko": "약수학술진흥회, 해양공학과"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2025-09",
+    "title": {
+      "en": "Global Language Training Scholarship",
+      "ko": "글로벌어학실습장학금"
+    },
+    "org": {
+      "en": "Pukyong National University",
+      "ko": "국립부경대학교"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2025-07",
+    "title": {
+      "en": "Pukyong Tutoring Scholarship",
+      "ko": "부경튜터링장학금"
+    },
+    "org": {
+      "en": "Pukyong National University",
+      "ko": "국립부경대학교"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2025-02",
+    "period": {
+      "en": "Aug 2021, Aug 2024, Feb 2025",
+      "ko": "2021.08, 2024.08, 2025.02"
+    },
+    "title": {
+      "en": "Academic Excellence Scholar (Full Scholarship)",
+      "ko": "성적우수장학생 (전액)"
+    },
+    "org": {
+      "en": "Dept. of Ocean Engineering, Pukyong National University",
+      "ko": "국립부경대학교 해양공학과"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2024-12",
+    "title": {
+      "en": "Busan New Port Scholar",
+      "ko": "부산신항만 장학생"
+    },
+    "org": {
+      "en": "Busan New Port Co., Ltd.",
+      "ko": "부산신항만(주)"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2024-11",
+    "title": {
+      "en": "Hae Seok Jeong Hae-young Scholarship",
+      "ko": "해석정해영선생장학문화재단 장학생"
+    },
+    "org": {
+      "en": "Hae Seok Jeong Hae-young Scholarship Foundation",
+      "ko": "해석정해영선생장학문화재단"
+    },
+    "image": ""
+  },
+  {
+    "type": "scholarship",
+    "date": "2022-02",
+    "title": {
+      "en": "Academic Excellence Scholar",
+      "ko": "성적우수장학생"
+    },
+    "org": {
+      "en": "Dept. of Ocean Engineering, Pukyong National University",
+      "ko": "국립부경대학교 해양공학과"
+    },
+    "image": ""
+  }
+]

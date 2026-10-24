@@ -1,0 +1,33 @@
+[
+  {
+    "id": "kosmee-2025",
+    "type": "domestic",
+    "date": "2025-11",
+    "title": {
+      "en": "Prediction of Coastal Hypoxia Occurrence Using Satellite Data and Machine Learning: Analysis of the Lag Effect of Environmental Factors",
+      "ko": "위성자료와 기계학습을 활용한 연안 빈산소수괴 발생 예측: 환경인자의 지연 효과 분석"
+    },
+    "authors": [
+      "Jaeyong Rhee",
+      "Seongsik Park",
+      "Kyunghoi Kim"
+    ],
+    "venue": {
+      "en": "2025 Autumn Conference of the Korean Society for Marine Environment and Energy (KOSMEE), Busan",
+      "ko": "2025 한국해양환경·에너지학회 추계학술대회, 부산"
+    },
+    "format": {
+      "en": "Oral",
+      "ko": "구두발표"
+    },
+    "award": {
+      "en": "Young Scientist Excellence Award",
+      "ko": "Young Scientist 우수상"
+    },
+    "doi": "",
+    "url": "",
+    "pdf": "",
+    "slides": "",
+    "research": "hypoxia"
+  }
+]

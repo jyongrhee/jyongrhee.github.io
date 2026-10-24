@@ -1,0 +1,84 @@
+{
+  "site": {
+    "url": "https://jyongrhee.github.io",
+    "default_lang": "en",
+    "since": 2026
+  },
+
+  "marks": "pknu",
+
+  "name": { "en": "Jaeyong Rhee", "ko": "이재용" },
+  "name_variants": ["Jaeyong Rhee", "J. Rhee", "Rhee, J.", "Rhee, J. Y.", "이재용"],
+  "affiliation": {
+    "en": "Incoming M.S. student, Cho Chun-sik Graduate School of Mobility, KAIST",
+    "ko": "KAIST 조천식모빌리티대학원 석사과정 입학 예정"
+  },
+  "tagline": {
+    "en": ["Studied ocean engineering.", "Interested in mechanics.", "Curious about what AI can bring to it."],
+    "ko": ["해양공학을 전공했습니다.", "역학에 관심이 많습니다.", "AI가 공학에 무엇을 더할 수 있을지 궁금합니다."]
+  },
+  "description": {
+    "en": "Jaeyong Rhee studied ocean engineering at Pukyong National University and is starting an M.S. at KAIST's Cho Chun-sik Graduate School of Mobility in 2027.",
+    "ko": "이재용. 국립부경대학교 해양공학과를 졸업하고 2027년 KAIST 조천식모빌리티대학원 석사과정에 입학합니다."
+  },
+
+  "email": "rheejy@kaist.ac.kr",
+  "links": {
+    "github": "https://github.com/jyongrhee",
+    "linkedin": "",
+    "scholar": "",
+    "orcid": ""
+  },
+
+  "portrait": "media/profile.jpg",
+  "hero": {
+    "image": "media/hero.jpg",
+    "caption": { "en": "Pukyong National University, Busan", "ko": "국립부경대학교, 부산" },
+    "coords": "35.1340°N 129.1030°E",
+    "date": "2026",
+    "depth": false
+  },
+
+  "location": {
+    "name": { "en": "KAIST Munji Campus", "ko": "KAIST 문지캠퍼스" },
+    "address": {
+      "en": "193 Munji-ro, Yuseong-gu, Daejeon 34051, Republic of Korea",
+      "ko": "대전광역시 유성구 문지로 193 (34051)"
+    },
+    "map_query": "KAIST Munji Campus, 193 Munji-ro, Yuseong-gu, Daejeon",
+    "coords": "36.3933°N 127.3998°E"
+  },
+
+  "lab": {
+    "name": { "en": "Battery System Laboratory (BSL)", "ko": "배터리시스템연구실 (BSL)" },
+    "url": "https://bsl.kaist.ac.kr"
+  },
+
+  "education": [
+    {
+      "logo": "kaist",
+      "period": { "en": "Mar 2027 –", "ko": "2027.03 –" },
+      "school": { "en": "KAIST", "ko": "KAIST" },
+      "degree": { "en": "M.S., Cho Chun-sik Graduate School of Mobility", "ko": "조천식모빌리티대학원 석사과정" },
+      "status": { "en": "Incoming", "ko": "입학 예정" },
+      "lab": true,
+      "badges": []
+    },
+    {
+      "logo": "pknu",
+      "period": { "en": "Mar 2021 – Aug 2026", "ko": "2021.03 – 2026.08" },
+      "school": { "en": "Pukyong National University", "ko": "국립부경대학교" },
+      "degree": { "en": "B.S., Ocean Engineering", "ko": "해양공학과 학사" },
+      "badges": [
+        { "en": "Summa Cum Laude", "ko": "Summa Cum Laude", "icon": "laurel" },
+        { "en": "Early Graduation", "ko": "조기졸업", "icon": "fast" }
+      ],
+      "thesis": {
+        "en": "Time-Lag-Aware Spatio-Temporal Prediction of Coastal Hypoxia Using Machine Learning Models",
+        "ko": "시간지연 효과를 고려한 기계학습 기반 연안 빈산소수괴 발생의 시공간 예측",
+        "research": "hypoxia"
+      },
+      "advisor": { "en": "Prof. Kyunghoi Kim", "ko": "김경회 교수" }
+    }
+  ]
+}

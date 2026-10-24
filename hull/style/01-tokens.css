@@ -1,0 +1,74 @@
+/* Jaeyong Rhee — personal website. © 2026 Jaeyong Rhee. All rights reserved.
+   Layout: full-width "surface" photo hero, then wide sections inside a 1440px beam.
+   Palette: near-black navy / pale grey, one signal blue. Type: SUIT + Geist Mono. */
+
+:root {
+  /* dark (default) */
+  --bg: #070B12;
+  --bg-2: #0A0F18;
+  --surface: #0D131D;
+  --surface-2: #111925;
+  --line: rgba(226, 234, 246, .085);
+  --line-2: rgba(226, 234, 246, .15);
+  --ink: #EEF2F7;
+  --ink-2: #B9C3D1;
+  --ink-3: #8B97A8;
+  --ink-4: #7A8696;
+  --accent: #3D8BFF;
+  --accent-ink: #8DBBFF;
+  --accent-soft: rgba(61, 139, 255, .12);
+  --accent-line: rgba(61, 139, 255, .45);
+  --on-accent: #03101F;
+  --scrim: rgba(3, 6, 12, .66);
+  --pk-navy: #E3EAF5; --pk-sky: #45AEEA; --oe: #E3EAF5;
+  --cv-bg: #0B111B; --cv-line: rgba(61, 139, 255, .30); --cv-key: rgba(141, 187, 255, .85); --cv-tick: rgba(139, 151, 168, .55);
+  --hatch: rgba(226, 234, 246, .05);
+  --shadow: 0 30px 60px -30px rgba(0, 0, 0, .7);
+  --map-filter: invert(.9) hue-rotate(180deg) saturate(.55) brightness(.92) contrast(.92);
+  color-scheme: dark;
+
+  --sans: "SUIT JR", "SUIT", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --mono: "Geist Mono JR", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --fs-xs: 12px; --fs-s: 13.5px; --fs-m: 15.5px; --fs-b: 17px; --fs-l: 20px; --fs-xl: clamp(24px, 2.2vw, 30px);
+  --fs-h2: clamp(26px, 2.5vw, 36px); --fs-h1: clamp(42px, 6vw, 92px);
+
+  --r-s: 8px; --r-m: 14px; --r-l: 20px;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --t1: 180ms; --t2: 320ms; --t3: 520ms;
+  --bridge-h: 64px;
+  --gutter: max(20px, 4vw);
+}
+
+:root[data-theme="light"] {
+  --bg: #F7F8FA;
+  --bg-2: #F0F2F6;
+  --surface: #FFFFFF;
+  --surface-2: #F7F9FC;
+  --line: #E4E8EE;
+  --line-2: #D3DAE4;
+  --ink: #0B1220;
+  --ink-2: #2E3A4C;
+  --ink-3: #5B6676;
+  --ink-4: #687383;
+  --accent: #1F5FD6;
+  --accent-ink: #1F5FD6;
+  --accent-soft: rgba(31, 95, 214, .075);
+  --accent-line: rgba(31, 95, 214, .4);
+  --on-accent: #FFFFFF;
+  --scrim: rgba(11, 18, 32, .38);
+  --pk-navy: #15366F; --pk-sky: #0499DB; --oe: #1A55A8;
+  --cv-bg: #EEF2F8; --cv-line: rgba(31, 95, 214, .22); --cv-key: rgba(31, 95, 214, .72); --cv-tick: rgba(91, 102, 118, .5);
+  --hatch: rgba(11, 18, 32, .04);
+  --shadow: 0 30px 60px -34px rgba(11, 18, 32, .28);
+  --map-filter: none;
+  color-scheme: light;
+}
+
+/* The hero is a dark island in both themes (white type on a photo). */
+.surface, .island {
+  --ink: #F1F4F9; --ink-2: #C9D2DE; --ink-3: #9AA6B6; --ink-4: #6F7B8B;
+  --line: rgba(255, 255, 255, .14); --line-2: rgba(255, 255, 255, .22);
+  --accent-ink: #9CC4FF;
+  --pk-navy: #E8EEF8; --pk-sky: #4DB3EE; --oe: #E8EEF8;
+}

@@ -1,0 +1,27 @@
+{
+  "name": "jyongrhee-site",
+  "private": true,
+  "type": "module",
+  "description": "Jaeyong Rhee personal website. Content lives in content/, everything else is generated.",
+  "scripts": {
+    "check": "node engine/check.mjs",
+    "build": "node engine/build.mjs",
+    "audit": "node engine/audit.mjs",
+    "serve": "node engine/serve.mjs",
+    "dev": "node engine/build.mjs --fast && node engine/serve.mjs"
+  },
+  "dependencies": {
+    "sharp": "0.34.4",
+    "subset-font": "2.9.0"
+  },
+  "optionalDependencies": {
+    "playwright-core": "1.56.1"
+  },
+  "devDependencies": {
+    "chrome-launcher": "1.2.2",
+    "lighthouse": "12.8.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
