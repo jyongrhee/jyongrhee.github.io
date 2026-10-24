@@ -32,6 +32,20 @@ export function brandMarks(ctx, prefix) {
     + `<span class="mark" title="Department of Ocean Engineering" role="img" aria-label="Department of Ocean Engineering">${m.oe}</span>`;
 }
 
+/* Pull request previews only: a thin bar above the bridge. Inline, so the live site's CSS is untouched. */
+const PREVIEW_CSS = ':root{--preview-h:32px}html{scroll-padding-top:calc(var(--bridge-h) + var(--preview-h) + 16px)}body{padding-top:var(--preview-h)}'
+  + '.preview-bar{position:fixed;inset:0 0 auto;z-index:70;height:var(--preview-h);display:flex;align-items:center;gap:12px;padding:0 var(--gutter);'
+  + 'background:var(--surface-2);border-bottom:1px solid var(--accent-line);color:var(--ink-2);font:500 var(--fs-xs)/1 var(--mono);letter-spacing:.04em}'
+  + '.preview-bar::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}'
+  + '.preview-bar a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent-line);text-underline-offset:3px}.preview-bar a:hover{color:var(--accent-ink)}'
+  + '.preview-bar__live{margin-left:auto}.bridge,.page-home .bridge{top:var(--preview-h)}';
+
+function previewBar(preview, lang) {
+  const ko = lang === 'ko';
+  return `<div class="preview-bar" role="note"><span>${ko ? '미리보기' : 'Preview'} · <a href="${esc(preview.url)}" rel="external">PR #${preview.number}</a></span>`
+    + `<a class="preview-bar__live" href="${esc(preview.live)}" rel="external">${ko ? '실제 사이트' : 'Live site'} →</a></div>`;
+}
+
 export function shell(ctx, page) {
   const { c, lang, build, assets } = ctx;
   const t = UI[lang];
@@ -60,7 +74,7 @@ export function shell(ctx, page) {
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#070B12" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#F7F8FA" media="(prefers-color-scheme: light)">
-${page.noindex ? '<meta name="robots" content="noindex">' : ''}
+${page.noindex || ctx.preview ? '<meta name="robots" content="noindex">' : ''}
 <link rel="canonical" href="${canonical}">
 ${page.altPath != null ? `<link rel="alternate" hreflang="en" href="${enUrl}"><link rel="alternate" hreflang="ko" href="${koUrl}"><link rel="alternate" hreflang="x-default" href="${enUrl}">` : ''}
 <meta property="og:type" content="${page.ogType || 'website'}">
@@ -79,7 +93,7 @@ ${page.altPath != null ? `<link rel="alternate" hreflang="en" href="${enUrl}"><l
 <link rel="alternate" type="application/rss+xml" title="${esc(name)}" href="${prefix}${lang === 'ko' ? 'ko/' : ''}feed.xml">
 <link rel="preload" href="${prefix}${assets.fontSans}" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:"SUIT JR";src:url("${prefix}${assets.fontSans}") format("woff2");font-weight:100 900;font-display:swap}@font-face{font-family:"Geist Mono JR";src:url("${prefix}${assets.fontMono}") format("woff2");font-weight:100 900;font-display:swap}</style>
-<link rel="stylesheet" href="${prefix}${assets.css}">
+<link rel="stylesheet" href="${prefix}${assets.css}">${ctx.preview ? `\n<style>${PREVIEW_CSS}</style>` : ''}
 <script>(function(){var d=document.documentElement,t;d.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('calm');try{t=localStorage.getItem('jr-theme')}catch(e){}if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}d.dataset.theme=t;${page.isHome && lang === 'en' ? `try{if(localStorage.getItem('jr-lang')==='ko'&&!/[?&]lang=en/.test(location.search))location.replace('ko/'+location.hash)}catch(e){}` : ''}})();</script>
 <script type="speculationrules">{"prerender":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*.pdf"}},{"not":{"selector_matches":"[rel~=external],[download]"}}]},"eagerness":"moderate"}]}</script>
 ${page.jsonld ? `<script type="application/ld+json">${JSON.stringify(page.jsonld).replace(/</g, '\\u003c')}</script>` : ''}
@@ -153,7 +167,7 @@ ${page.jsonld ? `<script type="application/ld+json">${JSON.stringify(page.jsonld
   const boot = {
     lang, prefix, home: page.isHome ? '' : home, page: page.kind,
     index: `${prefix}${lang === 'ko' ? 'ko/' : ''}search.json`,
-    sw: page.noSw ? '' : `${prefix}anchor.js`,
+    sw: page.noSw || ctx.preview ? '' : `${prefix}anchor.js`,
     email: P.email, github: P.links?.github || '',
     alt: page.altPath != null ? `${prefix}${page.altPath}` : '',
     cv: `${prefix}${lang === 'ko' ? 'ko/' : ''}cv.pdf`,
@@ -167,7 +181,7 @@ ${page.jsonld ? `<script type="application/ld+json">${JSON.stringify(page.jsonld
 
   return `${head}
 <body class="page-${page.kind}">
-<a class="skip" href="#main">${esc(t.skip)}</a>
+<a class="skip" href="#main">${esc(t.skip)}</a>${ctx.preview ? `\n${previewBar(ctx.preview, lang)}` : ''}
 ${glyphSprite()}
 ${bridge}
 <main id="main" tabindex="-1">

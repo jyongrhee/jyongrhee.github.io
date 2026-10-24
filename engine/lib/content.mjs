@@ -144,6 +144,7 @@ export function loadContent(root, report = new Report()) {
     if (h.research && !ids.has(h.research)) report.error(w, `research "${h.research}" is not an id in research.json`);
     if (h.publication && !pubIds.has(h.publication)) report.error(w, `publication "${h.publication}" is not an id in publications.json`);
   });
+  matchHonorPhotos(root, c.honors, report);
 
   /* activities */
   c.activities.forEach((a, i) => {
@@ -168,6 +169,59 @@ export function loadContent(root, report = new Report()) {
   }
 
   return { content: link(c), report };
+}
+
+/* Award and scholarship photos found by file name: media/honors/ (awards) and
+   media/scholarships/ (scholarships), named <date>-<word>.<ext>, e.g.
+   2026-07-thesis.jpg. The word picks the item when several share the date;
+   it is compared with the words of title.en and org.en, acronyms in brackets
+   and the initials of each name (Korea Leadership Development Foundation →
+   kldf). An image path written in honors.json always wins. */
+const PHOTO_DIRS = { award: 'media/honors', scholarship: 'media/scholarships' };
+const PHOTO = /^(\d{4}(?:-(?:0[1-9]|1[0-2]))?)-([a-z0-9]+)\.(jpe?g|png|webp|avif|heic|heif|tiff?|svg)$/i;
+const SMALL = new Set(['of', 'and', 'the', 'for', 'in', 'at', 'on', 'a', 'an']);
+
+function honorWords(h) {
+  const words = new Set();
+  for (const s of [h.title?.en, h.org?.en].filter(Boolean)) {
+    for (const w of s.toLowerCase().match(/[a-z0-9]+/g) || []) words.add(w);
+    for (const part of [s, ...s.split(/[,()]/)]) {
+      const caps = part.replace(/\([^)]*\)/g, ' ').split(/[^A-Za-z0-9.'’]+/).filter((w) => w && !SMALL.has(w.toLowerCase()) && /^[A-Z0-9]/.test(w));
+      if (caps.length > 1) words.add(caps.map((w) => w[0]).join('').toLowerCase());
+    }
+  }
+  return words;
+}
+
+function matchHonorPhotos(root, honors, report) {
+  const label = (h) => `honors "${String(h.title?.en || h.date).slice(0, 50)}"`;
+  const named = new Set(honors.map((h) => h.image).filter(Boolean));
+  const found = new Map();   // item → photos
+  for (const [type, dir] of Object.entries(PHOTO_DIRS)) {
+    let files = [];
+    try { files = fs.readdirSync(path.join(root, dir)).filter((f) => !f.startsWith('.')).sort(); } catch { continue; }
+    for (const f of files) {
+      const src = `${dir}/${f}`;
+      if (named.has(src) || !fs.statSync(path.join(root, src)).isFile()) continue;
+      const m = PHOTO.exec(f);
+      if (!m) { report.warn(src, 'name must be <YYYY or YYYY-MM>-<word>.jpg (e.g. 2026-07-thesis.jpg); not linked'); continue; }
+      const [, date, word] = m;
+      const sameDate = honors.filter((h) => h.type === type && !h.image && h.date && (h.date === date || h.date.startsWith(`${date}-`)));
+      const byWord = sameDate.filter((h) => honorWords(h).has(word.toLowerCase()));
+      let hit = null;
+      if (byWord.length === 1) hit = byWord[0];
+      else if (byWord.length > 1) report.warn(src, `"${word}" fits ${byWord.length} ${type}s dated ${date} (${byWord.map(label).join(', ')}); use a word only one of them has. Not linked`);
+      else if (sameDate.length === 1) { hit = sameDate[0]; report.warn(src, `"${word}" is not in the title or organisation, linked to the only ${type} dated ${date}`); }
+      else if (sameDate.length > 1) report.warn(src, `no ${type} dated ${date} has the word "${word}"; not linked`);
+      else report.warn(src, `no ${type} without an image is dated ${date}; not linked`);
+      if (hit) found.set(hit, [...(found.get(hit) || []), src]);
+    }
+  }
+  for (const [h, srcs] of found) {
+    h.image = srcs[0];
+    report.note(`photo ${srcs[0]} → ${label(h)}`);
+    if (srcs.length > 1) report.warn(label(h), `several photos match (${srcs.join(', ')}); using ${srcs[0]}`);
+  }
 }
 
 /* Derive cross-links so views never search for them again. */

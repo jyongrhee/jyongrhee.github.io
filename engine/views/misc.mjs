@@ -14,7 +14,7 @@ export function notFoundBody(ctx) {
   <p class="mono void__code">404 · −404 m</p>
   <h1>${esc(t.title)}</h1>
   <p>${esc(t.text)}</p>
-  <p class="void__acts"><a class="act act--solid" href="/">${g('left')}${esc(t.home)}</a><a class="act" href="/ko/">${g('lang')}한국어</a></p>
+  <p class="void__acts"><a class="act act--solid" href="${ctx.base || '/'}">${g('left')}${esc(t.home)}</a><a class="act" href="${ctx.base || '/'}ko/">${g('lang')}한국어</a></p>
 </section>`;
 }
 

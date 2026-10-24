@@ -2,6 +2,8 @@
 // Builds the whole site into _site/ from content/, media/ and hull/.
 //   node engine/build.mjs           full build (what GitHub Actions runs)
 //   node engine/build.mjs --fast    quick local build: no AVIF, no share images, no PDF
+//   node engine/build.mjs --preview=12   pull request preview served from /preview/pr-12/:
+//                                   noindex, no sitemap/robots, no service worker, no share images or PDF
 // © 2026 Jaeyong Rhee. All rights reserved.
 
 import fs from 'node:fs';
@@ -27,6 +29,13 @@ import { notFoundBody, offlineBody, cvHtml, ogHtml } from './views/misc.mjs';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, '_site');
 const FAST = process.argv.includes('--fast');
+const PREVIEW = (() => {
+  const i = process.argv.findIndex((a) => a === '--preview' || a.startsWith('--preview='));
+  if (i < 0) return null;
+  const n = (process.argv[i].split('=')[1] ?? process.argv[i + 1] ?? '').trim();
+  if (!/^\d+$/.test(n)) { console.log('  ✗ --preview needs a pull request number, e.g. --preview=12'); process.exit(1); }
+  return Number(n);
+})();
 const t0 = Date.now();
 const log = (...a) => console.log(...a);
 
@@ -108,7 +117,7 @@ function sonarGlyphs(lines) {
 
 /* ---------- main ---------- */
 async function main() {
-  log(`\n▸ Building site${FAST ? ' (fast)' : ''}`);
+  log(`\n▸ Building site${FAST ? ' (fast)' : ''}${PREVIEW ? ` (preview of pull request #${PREVIEW})` : ''}`);
   const report = new Report();
   const { content: c } = loadContent(ROOT, report);
   if (report.errors.length) { report.print(); log('\n✗ Fix the errors above, then build again.\n'); process.exit(1); }
@@ -118,7 +127,15 @@ async function main() {
 
   const build = buildInfo();
   const P = c.profile;
+  /* a preview lives in a sub-folder: every absolute address points there */
+  const base = PREVIEW ? `/preview/pr-${PREVIEW}/` : '/';
+  const liveUrl = P.site.url.replace(/\/$/, '');
+  if (PREVIEW) P.site.url = liveUrl + base.slice(0, -1);
   const siteUrl = P.site.url.replace(/\/$/, '');
+  const preview = PREVIEW ? {
+    number: PREVIEW, live: liveUrl + '/',
+    url: `https://github.com/${process.env.GITHUB_REPOSITORY || `${new URL(liveUrl).hostname.split('.')[0]}/${new URL(liveUrl).hostname}`}/pull/${PREVIEW}`,
+  } : null;
 
   /* images */
   const media = new Media(ROOT, OUT, report, { fast: FAST });
@@ -141,7 +158,7 @@ async function main() {
   const marks = { pknu: fs.readFileSync(path.join(ROOT, 'media/brand/pknu.svg'), 'utf8'), oe: fs.readFileSync(path.join(ROOT, 'media/brand/oe.svg'), 'utf8') };
 
   const cites = await citations(c, report);
-  const baseCtx = { root: ROOT, c, build, media, brand, marks, citations: cites, img: (src) => (src && imgMap[src]) || null,
+  const baseCtx = { root: ROOT, c, build, media, brand, marks, citations: cites, img: (src) => (src && imgMap[src]) || null, base, preview,
     assets: { css: '__CSS__', js: '__JS__', fontSans: '__FONT_SANS__', fontMono: '__FONT_MONO__' } };
 
   /* pages */
@@ -181,11 +198,11 @@ async function main() {
     });
     void t;
   }
-  const ctx404 = { ...baseCtx, lang: 'en', studyHref: (id) => `/research/${id}/` };
+  const ctx404 = { ...baseCtx, lang: 'en', studyHref: (id) => `${base}research/${id}/` };
   pages.push({ rel: '404.html', lang: 'en', kind: 'void', noSitemap: true,
-    html: shell(ctx404, { kind: 'void', prefix: '/', path: '404.html', altPath: null, noindex: true, title: `404 · ${pick(P.name, 'en')}`, description: UI.en.notFound.text, body: notFoundBody(ctx404) }) });
+    html: shell(ctx404, { kind: 'void', prefix: base, path: '404.html', altPath: null, noindex: true, title: `404 · ${pick(P.name, 'en')}`, description: UI.en.notFound.text, body: notFoundBody(ctx404) }) });
   pages.push({ rel: 'offline.html', lang: 'en', kind: 'void', noSitemap: true,
-    html: shell({ ...ctx404 }, { kind: 'void', prefix: '/', path: 'offline.html', altPath: null, noindex: true, noSw: true, title: `Offline · ${pick(P.name, 'en')}`, description: UI.en.offline.text, body: offlineBody({ lang: 'en' }) }) });
+    html: shell({ ...ctx404 }, { kind: 'void', prefix: base, path: 'offline.html', altPath: null, noindex: true, noSw: true, title: `Offline · ${pick(P.name, 'en')}`, description: UI.en.offline.text, body: offlineBody({ lang: 'en' }) }) });
 
   /* search indexes (needed before font subsetting) */
   const indexes = { en: searchIndex(c, 'en'), ko: searchIndex(c, 'ko') };
@@ -238,8 +255,10 @@ async function main() {
 
   /* machine-readable extras */
   const listed = pages.filter((p) => !p.noSitemap);
-  write('sitemap.xml', sitemap(siteUrl, listed, build.iso));
-  write('robots.txt', robots(siteUrl));
+  if (!PREVIEW) {
+    write('sitemap.xml', sitemap(siteUrl, listed, build.iso));
+    write('robots.txt', robots(siteUrl));
+  }
   write('feed.xml', feed(c, 'en', siteUrl, build.iso));
   write('ko/feed.xml', feed(c, 'ko', siteUrl, build.iso));
   write('search.json', indexes.en);
@@ -252,7 +271,7 @@ async function main() {
   /* service worker: precache the shell, version = hash of everything it caches */
   const precache = ['./', 'ko/', 'offline.html', cssRel, jsRel, fontSans, fontMono, 'favicon.svg', 'search.json', 'ko/search.json'];
   const version = sha(Buffer.from(precache.join('|') + home + css + js), 12);
-  write('anchor.js', fs.readFileSync(path.join(ROOT, 'hull/js/anchor.js'), 'utf8')
+  if (!PREVIEW) write('anchor.js', fs.readFileSync(path.join(ROOT, 'hull/js/anchor.js'), 'utf8')
     .replace('__VERSION__', version).replace('__PRECACHE__', JSON.stringify(precache)));
 
   /* share images + CV PDF (headless browser) */
@@ -262,7 +281,7 @@ async function main() {
     for (const r of c.research) ogTargets.push({ file: `og/research-${r.id}-${lang}.png`, id: r.id, kicker: `${pick(r.kind, lang)} · ${r.date.slice(0, 4)}`, title: pick(r.title, lang), sub: pick(r.full_title, lang) });
   }
   let browser = null;
-  if (!FAST) browser = await launch();
+  if (!FAST && !PREVIEW) browser = await launch();
   const fontsAbs = { sans: pathToFileURL(path.join(OUT, fontSans)).href, mono: pathToFileURL(path.join(OUT, fontMono)).href };
   const marksSvg = `${marks.pknu}<span class="rule"></span>${marks.oe}`;
   if (browser) {
@@ -284,6 +303,8 @@ async function main() {
     }
     await browser.close();
     report.note(`rendered ${ogTargets.length} share images and 2 CV PDFs`);
+  } else if (PREVIEW) {
+    report.note('preview build: share images and CV PDF skipped');
   } else {
     for (const o of ogTargets) {
       write(o.file, await sharp(Buffer.from(coverSvg(o.id, { w: 1200, h: 630 })

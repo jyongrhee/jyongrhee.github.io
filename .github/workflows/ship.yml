@@ -1,31 +1,77 @@
-# Builds the site from content/ and publishes it to GitHub Pages.
-# Runs on every push to main, once a day (to refresh citation counts),
-# and on demand from the Actions tab ("Run workflow").
+# Builds the site from content/ and publishes it to GitHub Pages, together
+# with a preview of every open pull request at /preview/pr-<number>/.
+#
+# Runs on every push to main, once a day (to refresh citation counts), every
+# hour (to remove previews older than 6 hours), on demand from the Actions tab
+# ("Run workflow"), when a pull request opens, changes or closes, and when the
+# owner comments /preview on a pull request.
+#
+# Every run works out the whole picture again (see .github/scripts/preview.cjs),
+# so a run that waits in the queue and gets replaced loses nothing.
+#
+# Safety: pull_request_target and issue_comment runs use this file and the
+# scripts from main. Pull request code is built only in the "preview" job,
+# which has read-only access, no secrets and no saved caches. Pull requests
+# from forks are never built.
 name: Build and publish
 
 on:
   push:
     branches: [main]
   schedule:
-    - cron: "17 18 * * *"   # 03:17 KST
+    - cron: "17 18 * * *"   # daily, 03:17 KST: full build + external link check
+    - cron: "41 * * * *"    # hourly: remove expired previews (no deploy when nothing changes)
   workflow_dispatch:
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, synchronize, closed]
+  issue_comment:
+    types: [created]
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+permissions: {}
 
+# One deploy at a time, never cancelled. Comments other than the owner's
+# /preview and pull requests from forks get their own group and stop at once,
+# so they never push a waiting deploy out of the queue.
 concurrency:
-  group: pages
+  group: ${{ ((github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository) || (github.event_name == 'issue_comment' && !(github.event.issue.pull_request && github.event.comment.author_association == 'OWNER' && startsWith(github.event.comment.body, '/preview')))) && format('ignored-{0}', github.run_id) || 'pages' }}
   cancel-in-progress: false
 
 jobs:
-  build:
+  plan:
+    if: ${{ !((github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository) || (github.event_name == 'issue_comment' && !(github.event.issue.pull_request && github.event.comment.author_association == 'OWNER' && startsWith(github.event.comment.body, '/preview')))) }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      deployments: read
+    outputs:
+      builds: ${{ steps.plan.outputs.builds }}
+      changes: ${{ steps.plan.outputs.changes }}
+      deploy: ${{ steps.plan.outputs.deploy }}
+      daily: ${{ steps.plan.outputs.daily }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7   # main's copy, never the pull request's
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+      - id: plan
+        uses: actions/github-script@v9
+        with:
+          script: await require('./.github/scripts/preview.cjs').plan({ github, context, core })
 
-      - uses: actions/setup-node@v4
+  site:
+    needs: plan
+    if: needs.plan.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -34,7 +80,7 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Restore image cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .cache
           key: media-${{ hashFiles('media/**') }}
@@ -44,7 +90,7 @@ jobs:
         run: npm run check
 
       - name: Check external links (daily run only)
-        if: github.event_name == 'schedule'
+        if: needs.plan.outputs.daily == 'true'
         run: node engine/check.mjs --links
 
       - name: Build
@@ -54,18 +100,135 @@ jobs:
         run: npm run audit
         continue-on-error: true
 
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-artifact@v7
         with:
+          name: site
+          path: _site
+          include-hidden-files: true
+          retention-days: 1
+
+  preview:
+    needs: plan
+    if: needs.plan.outputs.builds != '[]' && needs.plan.outputs.builds != ''
+    name: Preview PR #${{ matrix.pr.number }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        pr: ${{ fromJSON(needs.plan.outputs.builds) }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ matrix.pr.sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false   # pull request code must not write caches main uses
+
+      - name: Restore image cache (read only)
+        uses: actions/cache/restore@v6
+        with:
+          path: .cache
+          key: media-${{ hashFiles('media/**') }}
+          restore-keys: media-
+
+      - name: Check that this branch can build previews
+        run: |
+          if ! grep -q -- '--preview' engine/build.mjs; then
+            echo "::error::This branch is older than preview support. Merge main into it, then push again."
+            exit 1
+          fi
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Check content
+        run: npm run check
+
+      - name: Build preview
+        env:
+          PR_NUMBER: ${{ matrix.pr.number }}
+        run: node engine/build.mjs --preview="$PR_NUMBER"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: preview-${{ matrix.pr.number }}
+          path: _site
+          retention-days: 1
+
+  assemble:
+    needs: [plan, site, preview]
+    if: always() && needs.plan.outputs.deploy == 'true' && needs.site.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: site
           path: _site
 
+      - uses: actions/download-artifact@v8
+        if: needs.preview.result != 'skipped'
+        continue-on-error: true   # every preview may have failed; the site still ships
+        with:
+          pattern: preview-*
+          path: previews
+
+      - name: Put previews under /preview/
+        run: |
+          for dir in previews/preview-*; do
+            [ -d "$dir" ] || continue
+            n="${dir#previews/preview-}"
+            [[ "$n" =~ ^[0-9]+$ ]] || continue
+            mkdir -p _site/preview
+            mv "$dir" "_site/preview/pr-$n"
+            echo "preview of #$n → /preview/pr-$n/"
+          done
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+          include-hidden-files: true
+
   deploy:
-    needs: build
+    needs: assemble
+    if: always() && needs.assemble.result == 'success'
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+  report:
+    needs: [plan, preview, assemble, deploy]
+    if: always() && needs.plan.result == 'success' && (needs.plan.outputs.builds != '[]' || needs.plan.outputs.changes != '[]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7   # main's copy, never the pull request's
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+      - uses: actions/github-script@v9
+        env:
+          BUILDS: ${{ needs.plan.outputs.builds }}
+          CHANGES: ${{ needs.plan.outputs.changes }}
+          DEPLOYED: ${{ needs.deploy.result }}
+        with:
+          script: await require('./.github/scripts/preview.cjs').report({ github, context, core })
