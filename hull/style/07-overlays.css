@@ -49,4 +49,4 @@
 }
 .signal.is-on { transform: translate(-50%, 0); opacity: 1; }
 .signal .glyph { width: 16px; height: 16px; color: #34C38F; }
-@media (max-width: 1040px) { .signal { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
+@media (max-width: 1100px) { .signal { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
