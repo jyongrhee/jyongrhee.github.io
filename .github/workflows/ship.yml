@@ -154,10 +154,17 @@ jobs:
           PR_NUMBER: ${{ matrix.pr.number }}
         run: node engine/build.mjs --preview="$PR_NUMBER"
 
+      - name: Pack as pr-<number>/
+        env:
+          PR_NUMBER: ${{ matrix.pr.number }}
+        run: |
+          rm -rf out && mkdir out
+          mv _site "out/pr-$PR_NUMBER"
+
       - uses: actions/upload-artifact@v7
         with:
           name: preview-${{ matrix.pr.number }}
-          path: _site
+          path: out
           retention-days: 1
 
   assemble:
@@ -179,12 +186,13 @@ jobs:
         with:
           pattern: preview-*
           path: previews
+          merge-multiple: true   # each artifact holds only pr-<number>/
 
       - name: Put previews under /preview/
         run: |
-          for dir in previews/preview-*; do
+          for dir in previews/pr-*; do
             [ -d "$dir" ] || continue
-            n="${dir#previews/preview-}"
+            n="${dir#previews/pr-}"
             [[ "$n" =~ ^[0-9]+$ ]] || continue
             mkdir -p _site/preview
             mv "$dir" "_site/preview/pr-$n"
