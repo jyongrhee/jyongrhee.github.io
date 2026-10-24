@@ -33,9 +33,6 @@
   "portrait": "media/profile.jpg",
   "hero": {
     "image": "media/hero.jpg",
-    "caption": { "en": "Pukyong National University, Busan", "ko": "국립부경대학교, 부산" },
-    "coords": "35.1340°N 129.1030°E",
-    "date": "2026",
     "depth": false
   },
 
