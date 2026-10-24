@@ -303,6 +303,10 @@ function crew(ctx) {
 function contact(ctx) {
   const { c, lang } = ctx; const t = UI[lang]; const P = c.profile; const L = P.location || {};
   const q = encodeURIComponent(L.map_query || '');
+  /* "Embed a map" code from Google Maps pins the exact place; its interface language follows the page */
+  const mapSrc = L.map_embed
+    ? L.map_embed.replace(/!1s[a-z]{2}!2s/g, `!1s${lang}!2s`)
+    : `https://maps.google.com/maps?q=${q}&z=16&hl=${lang}&output=embed`;
   const links = [
     P.links?.github ? `<li><a href="${esc(P.links.github)}" rel="external me">${g('github')}GitHub<span>${esc(P.links.github.replace('https://', ''))}</span></a></li>` : '',
     P.links?.linkedin ? `<li><a href="${esc(P.links.linkedin)}" rel="external me">${g('linkedin')}LinkedIn</a></li>` : `<li><span class="is-off">${g('linkedin')}LinkedIn<span>${esc(t.linkedinSoon)}</span></span></li>`,
@@ -320,7 +324,7 @@ function contact(ctx) {
     <address class="berth__addr"><strong>${esc(pick(L.name, lang))}</strong><br>${esc(pick(L.address, lang))}<br><span class="mono">${esc(L.coords || '')}</span></address>
   </div>
   <figure class="berth__map">
-    <iframe title="${esc(t.mapTitle)}" src="https://maps.google.com/maps?q=${q}&amp;z=16&amp;hl=${lang}&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <iframe title="${esc(t.mapTitle)}" src="${esc(mapSrc)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     <figcaption><a href="https://www.google.com/maps/search/?api=1&amp;query=${q}" rel="external">${g('pin')}${esc(t.openMap)}${g('out')}</a></figcaption>
   </figure>
 </div></section>`;
