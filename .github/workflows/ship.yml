@@ -110,7 +110,7 @@ jobs:
   preview:
     needs: plan
     if: needs.plan.outputs.builds != '[]' && needs.plan.outputs.builds != ''
-    name: Preview PR #${{ matrix.pr.number }}
+    name: "Preview PR #${{ matrix.pr.number }}"
     runs-on: ubuntu-latest
     permissions:
       contents: read
