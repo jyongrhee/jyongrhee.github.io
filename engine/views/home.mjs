@@ -41,10 +41,10 @@ function surface(ctx, prefix) {
   <div class="surface__veil" aria-hidden="true"></div>
   <div class="beam surface__in">
     <div class="hud" aria-hidden="true">
-      <span class="hud__c hud__c--tl">${esc(pick(H.caption, lang))}</span>
-      <span class="hud__c hud__c--tr">${esc(H.coords || '')}</span>
+      ${pick(H.caption, lang) ? `<span class="hud__c hud__c--tl">${esc(pick(H.caption, lang))}</span>` : ''}
+      ${H.coords ? `<span class="hud__c hud__c--tr">${esc(H.coords)}</span>` : ''}
       <span class="hud__c hud__c--bl"><span class="hud__line"></span>${esc(lang === 'ko' ? '아래로' : 'Scroll')}</span>
-      <span class="hud__c hud__c--br">${esc(H.date || '')}</span>
+      ${H.date ? `<span class="hud__c hud__c--br">${esc(H.date)}</span>` : ''}
     </div>
     <div class="surface__grid">
       <figure class="portrait">

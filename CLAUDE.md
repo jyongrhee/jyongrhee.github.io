@@ -20,7 +20,7 @@ Jaeyong Rhee's personal website. GitHub Actions builds it from `content/` and `m
   - Funded projects → `projects.json`.
 - Photos: save under `media/research|activities|news/` with a short dated name (e.g. `2027-05-ksme.jpg`) and set the item's `image` (or `figure.src`) to that path. Crop or mask student ID, birth date and serial numbers first. Landscape 4:3 is best for certificates.
 - Award and scholarship photos link themselves by file name; leave `image` empty. Awards go in `media/honors/`, scholarships in `media/scholarships/`, named `<date>-<word>.jpg`: the item's date (`YYYY` or `YYYY-MM`) plus one English word from its title or organisation, or an acronym (e.g. `2026-07-thesis.jpg`, `2025-11-kosmee.jpg`, `2025-kldf.jpg`). When several items share the date, pick a word only one of them has (`2021-06-innovative.jpg`, not `2021-06-design.jpg`). The build log lists every `photo → item` link and warns about photos that match nothing or more than one item. A path written in `image` still wins.
-- Hero photo: replace `media/hero.jpg`, then update `profile.hero.caption`, `coords` and `date`. Portrait: `media/profile.jpg` (3:4).
+- Hero photo: replace `media/hero.jpg` (landscape, 1600 px wide or more). The hero shows no place, coordinates or date; do not add `caption`, `coords` or `date` back unless the owner asks. Portrait: `media/profile.jpg` (3:4).
 
 ## After enrolment (March 2027)
 When the owner says so: set `"marks": "kaist"` in `profile.json`. This switches the top bar to KAIST | BSL and shows the lab on the KAIST education line. Change the KAIST education `status` only if asked. Do not add the lab name or battery research claims anywhere else unless the owner asks.
