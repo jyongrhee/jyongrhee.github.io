@@ -278,10 +278,16 @@ function rowsWithFold(rows, limit) {
   return rows.slice(0, limit).join('') + `<li class="fold" data-fold="${rows.length}"><ol class="fold__list">${rows.slice(limit).join('')}</ol></li>`;
 }
 
-function crew(ctx) {
+function crew(ctx, prefix) {
   const { c, lang } = ctx; const t = UI[lang];
-  const acts = c.activities.map((a) => `<li class="ledger__row"><span class="ledger__when">${esc(pick(a.period, lang) || fmtDate(a.date, lang) || '—')}</span><div><p class="ledger__title">${esc(pick(a.title, lang))}</p><p class="ledger__org">${esc(pick(a.org, lang))}</p></div></li>`);
-  const certs = c.certificates.map((a) => `<li class="ledger__row"><span class="ledger__when">${esc(fmtDate(a.date, lang))}</span><div><p class="ledger__title">${esc(pick(a.title, lang))}</p><p class="ledger__org">${esc(pick(a.org, lang))}</p></div></li>`);
+  /* an activity or certificate with a photo gets a small picture at the end of its row; click to enlarge */
+  const row = (a, when) => {
+    const img = ctx.img(a.image);
+    const photo = img ? `<button class="ledger__photo" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(a.title, lang))}">${picture(img, prefix, { alt: pick(a.title, lang), sizes: '120px' })}</button>` : '';
+    return `<li class="ledger__row${img ? ' ledger__row--photo' : ''}"><span class="ledger__when">${esc(when)}</span><div><p class="ledger__title">${esc(pick(a.title, lang))}</p><p class="ledger__org">${esc(pick(a.org, lang))}</p></div>${photo}</li>`;
+  };
+  const acts = c.activities.map((a) => row(a, pick(a.period, lang) || fmtDate(a.date, lang) || '—'));
+  const certs = c.certificates.map((a) => row(a, fmtDate(a.date, lang)));
   const news = c.newsFeed.map((n) => {
     const link = n.research ? ` <a class="ledger__go" href="research/${esc(n.research)}/">${g('right')}</a>` : '';
     return `<li class="ledger__row"><time class="ledger__when" datetime="${esc(n.date)}">${esc(fmtDate(n.date, lang))}</time><div><p class="ledger__title">${n.kind === 'honor' ? g('laurel', 'inline') : ''}${esc(pick(n.title, lang))}${link}</p>${n.text ? `<p class="ledger__org">${esc(pick(n.text, lang))}</p>` : ''}</div></li>`;
@@ -331,5 +337,5 @@ function contact(ctx) {
 }
 
 export function homeBody(ctx, prefix) {
-  return [surface(ctx, prefix), education(ctx, prefix), research(ctx, prefix), honors(ctx, prefix), crew(ctx), contact(ctx)].join('\n');
+  return [surface(ctx, prefix), education(ctx, prefix), research(ctx, prefix), honors(ctx, prefix), crew(ctx, prefix), contact(ctx)].join('\n');
 }

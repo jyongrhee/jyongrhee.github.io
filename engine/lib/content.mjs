@@ -144,7 +144,7 @@ export function loadContent(root, report = new Report()) {
     if (h.research && !ids.has(h.research)) report.error(w, `research "${h.research}" is not an id in research.json`);
     if (h.publication && !pubIds.has(h.publication)) report.error(w, `publication "${h.publication}" is not an id in publications.json`);
   });
-  matchHonorPhotos(root, c.honors, report);
+  matchPhotos(root, 'honors', c.honors, { award: 'media/honors', scholarship: 'media/scholarships' }, report);
 
   /* activities */
   c.activities.forEach((a, i) => {
@@ -152,6 +152,7 @@ export function loadContent(root, report = new Report()) {
     if (!['activity', 'certificate'].includes(a.type)) report.error(w, 'type must be "activity" or "certificate"');
     both(w, a.title, 'title'); both(w, a.org, 'org'); date(w, a.date, a.type === 'certificate'); image(w, a.image);
   });
+  matchPhotos(root, 'activities', c.activities, { activity: 'media/activities', certificate: 'media/certificates' }, report);
 
   /* news */
   c.news.forEach((n, i) => { const w = where('news', i, n); both(w, n.title, 'title'); date(w, n.date); image(w, n.image); });
@@ -171,13 +172,13 @@ export function loadContent(root, report = new Report()) {
   return { content: link(c), report };
 }
 
-/* Award and scholarship photos found by file name: media/honors/ (awards) and
-   media/scholarships/ (scholarships), named <date>-<word>.<ext>, e.g.
+/* Photos found by file name, one folder per item type (awards in media/honors/,
+   scholarships in media/scholarships/, activities in media/activities/,
+   certificates in media/certificates/), named <date>-<word>.<ext>, e.g.
    2026-07-thesis.jpg. The word picks the item when several share the date;
    it is compared with the words of title.en and org.en, acronyms in brackets
    and the initials of each name (Korea Leadership Development Foundation →
-   kldf). An image path written in honors.json always wins. */
-const PHOTO_DIRS = { award: 'media/honors', scholarship: 'media/scholarships' };
+   kldf). An image path written in the item always wins. */
 const PHOTO = /^(\d{4}(?:-(?:0[1-9]|1[0-2]))?)-([a-z0-9]+)\.(jpe?g|png|webp|avif|heic|heif|tiff?|svg)$/i;
 const SMALL = new Set(['of', 'and', 'the', 'for', 'in', 'at', 'on', 'a', 'an']);
 
@@ -193,11 +194,11 @@ function honorWords(h) {
   return words;
 }
 
-function matchHonorPhotos(root, honors, report) {
-  const label = (h) => `honors "${String(h.title?.en || h.date).slice(0, 50)}"`;
+function matchPhotos(root, file, honors, dirs, report) {
+  const label = (h) => `${file} "${String(h.title?.en || h.date).slice(0, 50)}"`;
   const named = new Set(honors.map((h) => h.image).filter(Boolean));
   const found = new Map();   // item → photos
-  for (const [type, dir] of Object.entries(PHOTO_DIRS)) {
+  for (const [type, dir] of Object.entries(dirs)) {
     let files = [];
     try { files = fs.readdirSync(path.join(root, dir)).filter((f) => !f.startsWith('.')).sort(); } catch { continue; }
     for (const f of files) {
