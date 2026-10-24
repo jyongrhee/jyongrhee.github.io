@@ -321,7 +321,7 @@ function contact(ctx) {
     <p class="berth__k">${esc(t.elsewhere)}</p>
     <ul class="berth__links">${links}</ul>
     <p class="berth__k">${esc(t.address)}</p>
-    <address class="berth__addr"><strong>${esc(pick(L.name, lang))}</strong><br>${esc(pick(L.address, lang))}<br><span class="mono">${esc(L.coords || '')}</span></address>
+    <address class="berth__addr"><strong>${esc(pick(L.name, lang))}</strong><br>${esc(pick(L.address, lang))}${L.coords ? `<br><span class="mono">${esc(L.coords)}</span>` : ''}</address>
   </div>
   <figure class="berth__map">
     <iframe title="${esc(t.mapTitle)}" src="${esc(mapSrc)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
