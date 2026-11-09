@@ -32,7 +32,7 @@ Phone numbers, home address, birth date, student or military ID numbers, scholar
 1. `npm run check` — fix everything it reports as an error.
 2. Show the owner the exact entries you added or changed (both languages) and wait for approval.
 3. Commit with a short message such as `content: add 2027 KSME best paper award`. Pushing to `main` publishes the site in 1–2 minutes.
-4. Never merge pull requests or push to main. Stop after pushing the branch and opening the PR; the owner merges.
+4. Never push to main. After pushing the branch and opening the PR, wait for the owner to check the preview, then ask whether to merge, noting that merging was originally the owner's job (in Korean: "합칠까요? (원래는 직접 하시던 일입니다)"). Merge the PR only when the owner says to merge that PR; otherwise the owner merges.
 
 ## Design or feature changes
 Only when explicitly asked. Run `npm run build` and `npm run audit` afterwards; keep Lighthouse accessibility at 100 and performance at 90 or above. Asset file names are fingerprinted automatically; there is no version number to bump.
