@@ -136,6 +136,10 @@
 .ledger__title { font-size: 15.5px; font-weight: 620; line-height: 1.45; color: var(--ink); }
 .ledger__org { margin-top: 3px; font-size: 14px; color: var(--ink-3); }
 .ledger__note { margin-top: 6px; font-size: 14px; color: var(--ink-2); }
+.ledger__row--photo { grid-template-columns: 132px minmax(0, 1fr) 96px; }
+.ledger__photo { position: relative; align-self: start; width: 96px; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-s); background: var(--surface-2); cursor: zoom-in; transition: border-color var(--t1) var(--ease); }
+.ledger__photo:hover { border-color: var(--accent-line); }
+.ledger__photo picture, .ledger__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .ledger__go { display: inline-flex; vertical-align: -3px; color: var(--accent-ink); }
 .ledger__go .glyph { width: 16px; height: 16px; transition: transform var(--t2) var(--ease); }
 .ledger__go:hover .glyph { transform: translateX(3px); }
@@ -154,7 +158,7 @@
 .pair { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(44px, 6vw, 104px); }
 .pair > section { min-width: 0; scroll-margin-top: calc(var(--bridge-h) + 24px); }
 @media (max-width: 980px) { .pair { grid-template-columns: 1fr; } }
-@media (max-width: 560px) { .ledger__row, .paper { grid-template-columns: 1fr; gap: 4px; } }
+@media (max-width: 560px) { .ledger__row, .ledger__row--photo, .paper { grid-template-columns: 1fr; gap: 4px; } .ledger__photo { width: 144px; margin-top: 8px; } }
 
 /* ---------- honors (bento) ---------- */
 .tabs { position: relative; display: flex; gap: 4px; margin: -8px 0 22px; border-bottom: 1px solid var(--line); }
