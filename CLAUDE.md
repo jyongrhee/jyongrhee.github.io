@@ -22,6 +22,12 @@ Jaeyong Rhee's personal website. GitHub Actions builds it from `content/` and `m
 - Award, scholarship, activity and certificate photos link themselves by file name; leave `image` empty. Awards go in `media/honors/`, scholarships in `media/scholarships/`, activities in `media/activities/`, certificates in `media/certificates/`, named `<date>-<word>.jpg`: the item's date (`YYYY` or `YYYY-MM`) plus one English word from its title or organisation, or an acronym (e.g. `2026-07-thesis.jpg`, `2025-11-kosmee.jpg`, `2025-kldf.jpg`). When several items share the date, pick a word only one of them has (`2021-06-innovative.jpg`, not `2021-06-design.jpg`). The build log lists every `photo → item` link and warns about photos that match nothing or more than one item. A path written in `image` still wins, and an item without a date (some activities) needs that path. Activity and certificate photos show as a small picture at the end of the row; awards and scholarships show a photo in their tile. Every photo opens large on click.
 - Hero photo: replace `media/hero.jpg` (landscape, 1600 px wide or more). The hero shows no place, coordinates or date; do not add `caption`, `coords` or `date` back unless the owner asks. Portrait: `media/profile.jpg` (3:4).
 
+## Photo registration (awards, certificates, activity photos)
+- The agreed design is in `docs/photos-plan.md`; read it before any photo work. It is not built yet; that file says what to do until it is.
+- When the owner sends a photo or scan to register, first reply in Korean: "사진 처리 작업입니다. 모델을 Sonnet으로 바꾸셨나요?" Wait for the answer before doing anything on GitHub.
+- Strip EXIF/GPS before a photo goes anywhere, read the certificate, and show a confirmation table (type, tier, title en/ko, org en/ko, date, id). Never guess what the certificate does not say clearly.
+- After the owner says OK, upload, open the PR and merge it once checks pass (no second "합칠까요?" for photo registrations). If the owner says "수정해", show the preview and ask before merging that one.
+
 ## After enrolment (March 2027)
 When the owner says so: set `"marks": "kaist"` in `profile.json`. This switches the top bar to KAIST | BSL and shows the lab on the KAIST education line. Change the KAIST education `status` only if asked. Do not add the lab name or battery research claims anywhere else unless the owner asks.
 
