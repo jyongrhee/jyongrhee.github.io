@@ -73,10 +73,12 @@ jobs:
     permissions:
       contents: read
     outputs:
-      key: ${{ steps.save.outputs.key }}
+      key: ${{ steps.save.outcome == 'success' && steps.has.outputs.key || '' }}   # cache/save has no output of its own
     steps:
       - id: has
-        run: echo "token=${{ secrets.PHOTOS_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "token=${{ secrets.PHOTOS_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+          echo "key=photos-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v7
         if: steps.has.outputs.token == 'true'
@@ -120,7 +122,7 @@ jobs:
         uses: actions/cache/save@v6
         with:
           path: photos
-          key: photos-${{ github.run_id }}-${{ github.run_attempt }}
+          key: ${{ steps.has.outputs.key }}
 
   site:
     needs: [plan, photos]
