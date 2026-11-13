@@ -1,5 +1,6 @@
 [
   {
+    "id": "2026-10-website-launch",
     "date": "2026-10",
     "title": {
       "en": "Launched this website",
@@ -12,6 +13,7 @@
     "image": ""
   },
   {
+    "id": "2026-09-kaist-admission",
     "date": "2026-09",
     "title": {
       "en": "Admitted to KAIST",
@@ -24,6 +26,7 @@
     "image": ""
   },
   {
+    "id": "2026-08-graduation",
     "date": "2026-08",
     "title": {
       "en": "Graduated from Pukyong National University",

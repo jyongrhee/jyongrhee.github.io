@@ -6,13 +6,30 @@
 // Exit code 1 when there are errors.
 // © 2026 Jaeyong Rhee. All rights reserved.
 
+import fs from 'node:fs';
 import path from 'node:path';
+import sharp from 'sharp';
+import { hasGps } from './lib/media.mjs';
 import { fileURLToPath } from 'node:url';
 import { loadContent, Report } from './lib/content.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const report = new Report();
 const { content: c } = loadContent(ROOT, report);
+
+/* Photos kept in this public repository stay in its history for good, so they
+   must arrive small and without location data. (Certificate and activity photos
+   belong in the private photos repository; see docs/photos-plan.md.) */
+const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+for (const f of walk(path.join(ROOT, 'media')).filter((n) => /\.(jpe?g|png|webp|tiff?|heic|heif|avif)$/i.test(n))) {
+  const rel = path.relative(ROOT, f).split(path.sep).join('/');
+  const size = fs.statSync(f).size;
+  if (size > 1024 * 1024) report.warn(rel, `is ${(size / 1048576).toFixed(1)} MB; shrink it below 1 MB before committing (it stays in the history)`);
+  try {
+    const meta = await sharp(f).metadata();
+    if (hasGps(meta.exif)) report.error(rel, 'contains GPS location data; strip the metadata before committing');
+  } catch { report.warn(rel, 'could not be read as an image'); }
+}
 
 if (process.argv.includes('--links') && !report.errors.length) {
   const urls = new Set();

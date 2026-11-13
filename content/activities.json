@@ -1,5 +1,6 @@
 [
   {
+    "id": "youth-advisory-committee",
     "type": "activity",
     "date": "",
     "period": {
@@ -17,6 +18,7 @@
     "image": ""
   },
   {
+    "id": "2025-09-ksoe-reporter",
     "type": "activity",
     "date": "2025-09",
     "period": {
@@ -34,6 +36,7 @@
     "image": ""
   },
   {
+    "id": "2025-09-planning-team-leader",
     "type": "activity",
     "date": "2025-09",
     "period": {
@@ -51,6 +54,7 @@
     "image": ""
   },
   {
+    "id": "2025-academic-mentoring",
     "type": "activity",
     "date": "2025",
     "period": {
@@ -68,6 +72,7 @@
     "image": ""
   },
   {
+    "id": "2025-07-unlv-presentation",
     "type": "activity",
     "date": "2025-07",
     "period": {
@@ -85,6 +90,7 @@
     "image": ""
   },
   {
+    "id": "2025-06-unlv-visiting",
     "type": "activity",
     "date": "2025-06",
     "period": {
@@ -102,6 +108,7 @@
     "image": ""
   },
   {
+    "id": "2024-03-kb-mentor",
     "type": "activity",
     "date": "2024-03",
     "period": {
@@ -119,6 +126,7 @@
     "image": ""
   },
   {
+    "id": "2024-02-samsung-supporters",
     "type": "activity",
     "date": "2024-02",
     "period": {
@@ -136,6 +144,7 @@
     "image": ""
   },
   {
+    "id": "2024-student-representative",
     "type": "activity",
     "date": "2024",
     "period": {
@@ -153,6 +162,7 @@
     "image": ""
   },
   {
+    "id": "2022-03-navy-counselor",
     "type": "activity",
     "date": "2022-03",
     "period": {
@@ -170,6 +180,7 @@
     "image": ""
   },
   {
+    "id": "2026-07-google-ai-cert",
     "type": "certificate",
     "date": "2026-07",
     "title": {

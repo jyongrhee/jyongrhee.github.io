@@ -144,7 +144,8 @@ export function loadContent(root, report = new Report()) {
     if (h.research && !ids.has(h.research)) report.error(w, `research "${h.research}" is not an id in research.json`);
     if (h.publication && !pubIds.has(h.publication)) report.error(w, `publication "${h.publication}" is not an id in publications.json`);
   });
-  matchPhotos(root, 'honors', c.honors, { award: 'media/honors', scholarship: 'media/scholarships' }, report);
+  itemIds('honors', c.honors, where, report);
+  linkPhotos(root, 'honors', c.honors, { award: 'honors', scholarship: 'scholarships' }, report);
 
   /* activities */
   c.activities.forEach((a, i) => {
@@ -152,16 +153,19 @@ export function loadContent(root, report = new Report()) {
     if (!['activity', 'certificate'].includes(a.type)) report.error(w, 'type must be "activity" or "certificate"');
     both(w, a.title, 'title'); both(w, a.org, 'org'); date(w, a.date, a.type === 'certificate'); image(w, a.image);
   });
-  matchPhotos(root, 'activities', c.activities, { activity: 'media/activities', certificate: 'media/certificates' }, report);
+  itemIds('activities', c.activities, where, report);
+  linkPhotos(root, 'activities', c.activities, { activity: 'activities', certificate: 'certificates' }, report);
 
   /* news */
   c.news.forEach((n, i) => { const w = where('news', i, n); both(w, n.title, 'title'); date(w, n.date); image(w, n.image); });
+  itemIds('news', c.news, where, report);
+  linkPhotos(root, 'news', c.news, { '': 'news' }, report);
 
   /* privacy scan over every string in every file */
   const allowedEmail = (P.email || '').toLowerCase();
   for (const f of FILES) {
     walkStrings(c[f], `content/${f}.json`, (s, label) => {
-      if (/^(media\/|https:\/\/)/.test(s)) return;
+      if (/^(media\/|photos\/|https:\/\/)/.test(s)) return;
       for (const [name, re] of PRIVATE) if (re.test(s)) report.error(label, `looks like a ${name} — remove it before publishing ("${s.slice(0, 60)}")`);
       for (const m of s.match(/[^@\s"']+@[^@\s"']+\.[a-z]{2,}/gi) || []) {
         if (m.toLowerCase() !== allowedEmail) report.error(label, `email address "${m}" is not the public one in profile.email`);
@@ -172,56 +176,43 @@ export function loadContent(root, report = new Report()) {
   return { content: link(c), report };
 }
 
-/* Photos found by file name, one folder per item type (awards in media/honors/,
-   scholarships in media/scholarships/, activities in media/activities/,
-   certificates in media/certificates/), named <date>-<word>.<ext>, e.g.
-   2026-07-thesis.jpg. The word picks the item when several share the date;
-   it is compared with the words of title.en and org.en, acronyms in brackets
-   and the initials of each name (Korea Leadership Development Foundation →
-   kldf). An image path written in the item always wins. */
-const PHOTO = /^(\d{4}(?:-(?:0[1-9]|1[0-2]))?)-([a-z0-9]+)\.(jpe?g|png|webp|avif|heic|heif|tiff?|svg)$/i;
-const SMALL = new Set(['of', 'and', 'the', 'for', 'in', 'at', 'on', 'a', 'an']);
-
-function honorWords(h) {
-  const words = new Set();
-  for (const s of [h.title?.en, h.org?.en].filter(Boolean)) {
-    for (const w of s.toLowerCase().match(/[a-z0-9]+/g) || []) words.add(w);
-    for (const part of [s, ...s.split(/[,()]/)]) {
-      const caps = part.replace(/\([^)]*\)/g, ' ').split(/[^A-Za-z0-9.'’]+/).filter((w) => w && !SMALL.has(w.toLowerCase()) && /^[A-Z0-9]/.test(w));
-      if (caps.length > 1) words.add(caps.map((w) => w[0]).join('').toLowerCase());
-    }
-  }
-  return words;
+/* Every award, scholarship, activity, certificate and news item has an id
+   (lowercase-with-dashes, unique in its file). Photos are found by that id. */
+function itemIds(file, items, where, report) {
+  const seen = new Set();
+  items.forEach((x, i) => {
+    const w = where(file, i, x);
+    if (!x.id || !ID.test(x.id)) report.error(w, 'id is missing or not lowercase-with-dashes (photos are linked by it)');
+    else if (seen.has(x.id)) report.error(w, `id "${x.id}" is used twice`); else seen.add(x.id);
+  });
 }
 
-function matchPhotos(root, file, honors, dirs, report) {
-  const label = (h) => `${file} "${String(h.title?.en || h.date).slice(0, 50)}"`;
-  const named = new Set(honors.map((h) => h.image).filter(Boolean));
-  const found = new Map();   // item → photos
-  for (const [type, dir] of Object.entries(dirs)) {
+/* Photos live in the private photos repository, prepared into photos/ by the
+   build (engine/photos.mjs); one folder per item type, each file named after
+   its item's id: photos/honors/2026-07-best-thesis.jpg. <id>-2.jpg and so on
+   are kept for more pictures of the same item. An image path written in the
+   item always wins. Without the folder the site simply shows no such photos. */
+const PHOTO_EXT = /\.(jpe?g|png|webp)$/i;
+
+function linkPhotos(root, file, items, folders, report) {
+  const base = 'photos';
+  if (!fs.existsSync(path.join(root, base))) return;
+  for (const [type, folder] of Object.entries(folders)) {
     let files = [];
-    try { files = fs.readdirSync(path.join(root, dir)).filter((f) => !f.startsWith('.')).sort(); } catch { continue; }
-    for (const f of files) {
-      const src = `${dir}/${f}`;
-      if (named.has(src) || !fs.statSync(path.join(root, src)).isFile()) continue;
-      const m = PHOTO.exec(f);
-      if (!m) { report.warn(src, 'name must be <YYYY or YYYY-MM>-<word>.jpg (e.g. 2026-07-thesis.jpg); not linked'); continue; }
-      const [, date, word] = m;
-      const sameDate = honors.filter((h) => h.type === type && !h.image && h.date && (h.date === date || h.date.startsWith(`${date}-`)));
-      const byWord = sameDate.filter((h) => honorWords(h).has(word.toLowerCase()));
-      let hit = null;
-      if (byWord.length === 1) hit = byWord[0];
-      else if (byWord.length > 1) report.warn(src, `"${word}" fits ${byWord.length} ${type}s dated ${date} (${byWord.map(label).join(', ')}); use a word only one of them has. Not linked`);
-      else if (sameDate.length === 1) { hit = sameDate[0]; report.warn(src, `"${word}" is not in the title or organisation, linked to the only ${type} dated ${date}`); }
-      else if (sameDate.length > 1) report.warn(src, `no ${type} dated ${date} has the word "${word}"; not linked`);
-      else report.warn(src, `no ${type} without an image is dated ${date}; not linked`);
-      if (hit) found.set(hit, [...(found.get(hit) || []), src]);
+    try { files = fs.readdirSync(path.join(root, base, folder)).filter((f) => PHOTO_EXT.test(f)).sort(); } catch { continue; }
+    const mine = items.filter((x) => !type || x.type === type);
+    const ids = new Set(mine.map((x) => x.id));
+    for (const x of mine) {
+      if (x.image || !x.id) continue;
+      const f = files.find((n) => n.replace(PHOTO_EXT, '') === x.id);
+      if (!f) continue;
+      x.image = `${base}/${folder}/${f}`;
+      report.note(`photo ${folder}/${f} → ${file} "${x.id}"`);
     }
-  }
-  for (const [h, srcs] of found) {
-    h.image = srcs[0];
-    report.note(`photo ${srcs[0]} → ${label(h)}`);
-    if (srcs.length > 1) report.warn(label(h), `several photos match (${srcs.join(', ')}); using ${srcs[0]}`);
+    for (const f of files) {
+      const id = f.replace(PHOTO_EXT, '').replace(/-\d+$/, '');
+      if (!ids.has(id) && !ids.has(f.replace(PHOTO_EXT, ''))) report.warn(`${base}/${folder}/${f}`, `no ${file} item has the id "${f.replace(PHOTO_EXT, '')}"; not shown`);
+    }
   }
 }
 
@@ -240,7 +231,7 @@ function link(c) {
   const certificates = c.activities.filter((a) => a.type === 'certificate').sort(byDateDesc);
   const news = [
     ...c.news.map((n) => ({ ...n, kind: 'news' })),
-    ...c.honors.filter((h) => h.news).map((h) => ({ date: h.date, title: h.title, text: h.org, kind: 'honor', research: h.research })),
+    ...c.honors.filter((h) => h.news).map((h) => ({ id: h.id, date: h.date, title: h.title, text: h.org, kind: 'honor', research: h.research, image: h.image })),
   ].sort(byDateDesc);
   const publications = [...c.publications].sort(byDateDesc);
   return { ...c, research, publications, awards, scholarships, activities, certificates, newsFeed: news };

@@ -4,12 +4,14 @@ Jaeyong Rhee's personal website. GitHub Actions builds it from `content/` and `m
 
 ## Folders
 - `content/*.json` — all text. Every text field is `{ "en": "...", "ko": "..." }`.
-- `media/` — photos and figures (originals; the build makes web sizes and strips metadata).
+- `media/` — research figures, the hero photo, the portrait and logos (the build makes web sizes and strips metadata).
+- Certificate, award, scholarship, activity and news photos are NOT here: they live in the private `jyongrhee/photos` repository (see `docs/photos-plan.md`).
 - `engine/` — the build (Node). `hull/` — styles, scripts, fonts. Touch these only when asked for a design or feature change.
 
 ## Content updates (the usual request)
 - Edit only `content/*.json` and add files under `media/`.
 - Always fill both `en` and `ko`. Natural, plain Korean; no stiff or AI-sounding phrasing. English as a native speaker would write it.
+- Every item in `honors.json`, `activities.json` and `news.json` has an `id`: lowercase-with-dashes, date first, unique in its file (e.g. `2026-07-best-thesis`). Photos are linked by it, so do not change an id once it has a photo.
 - Dates are `YYYY` or `YYYY-MM`. Awards, scholarships, papers and news sort by date automatically; activities show in file order (newest at the top).
 - Where things go:
   - Research → `research.json` (one item = one research page at `/research/<id>/`; `id` is lowercase-with-dashes). Chapters take `text` or `steps`, and an optional `figure`. `"pin": true` puts a study first.
@@ -18,15 +20,15 @@ Jaeyong Rhee's personal website. GitHub Actions builds it from `content/` and `m
   - Activities → `activities.json` (`type`: activity). Certificates and course completions → same file, `type`: certificate.
   - News → `news.json`.
   - Funded projects → `projects.json`.
-- Photos: save under `media/research|news/` with a short dated name (e.g. `2027-05-ksme.jpg`) and set the item's `image` (or `figure.src`) to that path. Crop or mask student ID, birth date and serial numbers first. Landscape 4:3 is best for certificates.
-- Award, scholarship, activity and certificate photos link themselves by file name; leave `image` empty. Awards go in `media/honors/`, scholarships in `media/scholarships/`, activities in `media/activities/`, certificates in `media/certificates/`, named `<date>-<word>.jpg`: the item's date (`YYYY` or `YYYY-MM`) plus one English word from its title or organisation, or an acronym (e.g. `2026-07-thesis.jpg`, `2025-11-kosmee.jpg`, `2025-kldf.jpg`). When several items share the date, pick a word only one of them has (`2021-06-innovative.jpg`, not `2021-06-design.jpg`). The build log lists every `photo → item` link and warns about photos that match nothing or more than one item. A path written in `image` still wins, and an item without a date (some activities) needs that path. Activity and certificate photos show as a small picture at the end of the row; awards and scholarships show a photo in their tile. Every photo opens large on click.
+- Research figures: save under `media/research/` with a short dated name and set `figure.src` to that path. Anything committed here stays in the public history forever: shrink it below 1 MB and strip metadata first (`npm run check` blocks GPS data).
+- Award, scholarship, activity, certificate and news photos go to the private photos repository as `<folder>/<id>.jpg` (folders: honors, scholarships, activities, certificates, news); leave `image` empty and the build links them by id. Crop or mask student ID, birth date, serial numbers and scholarship amounts first. On the site: awards and scholarships show the whole document in their tile, activities and certificates a small picture at the end of the row, news the newest item as a large card and the rest as small pictures. Every photo opens large on click.
 - Hero photo: replace `media/hero.jpg` (landscape, 1600 px wide or more). The hero shows no place, coordinates or date; do not add `caption`, `coords` or `date` back unless the owner asks. Portrait: `media/profile.jpg` (3:4).
 
 ## Photo registration (awards, certificates, activity photos)
-- The agreed design is in `docs/photos-plan.md`; read it before any photo work. It is not built yet; that file says what to do until it is.
+- The design is in `docs/photos-plan.md`; read it before any photo work. The photos repository is checked out next to this one (e.g. `/home/user/photos`); if the session does not have it, ask the owner to add `jyongrhee/photos` to the session.
 - When the owner sends a photo or scan to register, first reply in Korean: "사진 처리 작업입니다. 모델을 Sonnet으로 바꾸셨나요?" Wait for the answer before doing anything on GitHub.
 - Strip EXIF/GPS before a photo goes anywhere, read the certificate, and show a confirmation table (type, tier, title en/ko, org en/ko, date, id). Never guess what the certificate does not say clearly.
-- After the owner says OK, upload, open the PR and merge it once checks pass (no second "합칠까요?" for photo registrations). If the owner says "수정해", show the preview and ask before merging that one.
+- After the owner says OK: push the prepared photo to the photos repository's `main` (that repository is a data store, so direct pushes there are fine), then put the text in this repository through a PR and merge it once checks pass (no second "합칠까요?" for photo registrations). If only a photo changed and no text, run the "Build and publish" workflow instead (workflow_dispatch). If the owner says "수정해", show the preview and ask before merging that one.
 
 ## After enrolment (March 2027)
 When the owner says so: set `"marks": "kaist"` in `profile.json`. This switches the top bar to KAIST | BSL and shows the lab on the KAIST education line. Change the KAIST education `status` only if asked. Do not add the lab name or battery research claims anywhere else unless the owner asks.

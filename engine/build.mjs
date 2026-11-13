@@ -147,7 +147,7 @@ async function main() {
   for (const r of c.research) { want(r.cover, [640, 1200, 1800]); for (const ch of r.chapters || []) want(ch.figure?.src, [640, 1200, 1800]); }
   for (const h of c.honors) want(h.image, [480, 960, 1600]);
   for (const a of [...c.activities, ...c.certificates]) want(a.image, [240, 480, 960]);
-  for (const n of c.news) want(n.image, [480, 960]);
+  for (const n of c.newsFeed) want(n.image, [240, 480, 960, 1600]);   // after honors: an award shown as news reuses its photo
   const imgMap = {};
   for (const [src, w] of jobs) imgMap[src] = await media.get(src, w);
   if (media.gpsRemoved) report.note(`removed GPS location data from ${media.gpsRemoved} photo(s)`);
