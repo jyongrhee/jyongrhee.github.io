@@ -297,7 +297,7 @@ jobs:
   # 404. GitHub's cache can serve them for up to ~10 minutes, so retry.
   verify:
     needs: [assemble, deploy]
-    if: needs.deploy.result == 'success' && needs.assemble.outputs.removed_count != '0'
+    if: always() && needs.deploy.result == 'success' && needs.assemble.outputs.removed_count != '0'   # always(): a skipped preview upstream must not skip this
     runs-on: ubuntu-latest
     permissions: {}
     steps:
