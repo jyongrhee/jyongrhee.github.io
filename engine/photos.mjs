@@ -34,5 +34,7 @@ for (const folder of FOLDERS) {
     } catch (e) { console.log(`  ✗ ${folder}/${f}: ${e.message}`); failed++; }
   }
 }
+fs.mkdirSync(out, { recursive: true });
+fs.writeFileSync(path.join(out, '.ready'), `${done}\n`);   // so the folder is never empty when cached
 console.log(`  · ${done} photo(s) prepared in ${out}/${failed ? `, ${failed} failed` : ''}`);
 process.exit(failed ? 1 : 0);
