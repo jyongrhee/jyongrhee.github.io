@@ -15,13 +15,14 @@ jyongrhee/photos (Private)         사진 창고. 처리된 사진만 넣는다
   inbox/                            주인이 여러 장을 한꺼번에 올리는 곳 (선택)
         │ 신뢰된 단계만 읽기 전용 토큰(PHOTOS_TOKEN)으로 가져옴
         ▼
-jyongrhee.github.io의 Actions       photos 단계(main 코드만 실행) → Actions 캐시에 저장
-        ▼                           site·PR 미리보기 빌드는 캐시에서 사진만 받음 (토큰 없음)
+jyongrhee.github.io의 Actions       site 빌드(main 코드만 실행)가 직접 받아 정리 → 빌드
+        ▼                           정리한 사진을 Actions 캐시에 남김 → PR 미리보기는 캐시에서만 받음 (토큰 없음)
 홈페이지                             웹용 사진만 공개
 ```
 - 사진은 항목의 **고유 ID**로 연결한다. `honors.json`·`activities.json`·`news.json`의 모든 항목에 `"id"`가 있고, 사진 파일 이름은 `<id>.jpg`다. 여러 장이면 `<id>-2.jpg`, `<id>-3.jpg`(지금은 첫 장만 표시한다). 어떤 항목과도 맞지 않는 파일은 빌드 로그에 경고가 뜬다.
-- 빌드 쪽 코드: `engine/photos.mjs`(사진 준비), `engine/lib/content.mjs`의 `linkPhotos`(ID로 연결), `.github/workflows/ship.yml`의 `photos`·`verify` 단계.
-- 단계 사이에서 사진은 아티팩트가 아니라 **Actions 캐시**로 넘긴다. 공개 리포지토리의 아티팩트는 GitHub에 로그인한 누구나 내려받을 수 있기 때문이다.
+- 빌드 쪽 코드: `engine/photos.mjs`(사진 준비), `engine/lib/content.mjs`의 `linkPhotos`(ID로 연결), `.github/workflows/ship.yml`의 `site`(사진 받기)·`verify` 단계.
+- 미리보기에는 사진을 아티팩트가 아니라 **Actions 캐시**로 넘긴다. 공개 리포지토리의 아티팩트는 GitHub에 로그인한 누구나 내려받을 수 있기 때문이다.
+- PR 이벤트로 시작된 실행에서는 GitHub이 캐시를 읽기만 허락한다. 그래서 미리보기는 **마지막 일반 배포**(main 합치기, Run workflow, 정기 실행)가 남긴 사진을 쓴다. 사진을 올린 뒤에는 Claude가 Run workflow를 실행하므로 캐시가 최신으로 유지된다. 실제 홈페이지 빌드는 매번 photos에서 직접 받아서 항상 최신이다.
 - photos가 없거나 비어 있으면 아무것도 하지 않는다. 기존 `media/hero.jpg`와 로고는 홈페이지 리포지토리에 그대로 둔다.
 
 ## 화면에 보이는 모습

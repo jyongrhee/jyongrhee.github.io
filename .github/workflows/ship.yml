@@ -61,32 +61,38 @@ jobs:
           script: await require('./.github/scripts/preview.cjs').plan({ github, context, core })
 
   # Certificate and activity photos live in the private photos repository.
-  # Only this job holds the read-only PHOTOS_TOKEN; it strips metadata again
-  # and hands the prepared photos to the builds through the Actions cache,
-  # which (unlike artifacts) nobody outside the workflows can download.
-  # Without the secret the site builds without those photos. If the secret is
-  # set but the photos cannot be fetched, nothing is deployed.
-  photos:
+  # This job runs only main's code, so it may hold the read-only PHOTOS_TOKEN:
+  # it fetches the photos, strips metadata again and caps their size before
+  # building. Without the secret the site builds without those photos; if the
+  # secret is set but the photos cannot be fetched, nothing is deployed.
+  # It also leaves the prepared photos in the Actions cache (which, unlike
+  # artifacts, nobody outside the workflows can download) for preview builds.
+  # Runs started by pull request events may only read that cache, so previews
+  # then use the photos saved by the last regular deploy.
+  site:
     needs: plan
     if: needs.plan.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    outputs:
-      key: ${{ steps.save.outcome == 'success' && steps.has.outputs.key || '' }}   # cache/save has no output of its own
     steps:
-      - id: has
-        run: |
-          echo "token=${{ secrets.PHOTOS_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
-          echo "key=photos-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
-
       - uses: actions/checkout@v7
-        if: steps.has.outputs.token == 'true'
         with:
           persist-credentials: false
 
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - id: photos
+        run: echo "token=${{ secrets.PHOTOS_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v7
-        if: steps.has.outputs.token == 'true'
+        if: steps.photos.outputs.token == 'true'
         with:
           repository: ${{ github.repository_owner }}/photos
           token: ${{ secrets.PHOTOS_TOKEN }}
@@ -94,7 +100,7 @@ jobs:
           persist-credentials: false
 
       - name: Warn before the photos token expires
-        if: steps.has.outputs.token == 'true'
+        if: steps.photos.outputs.token == 'true'
         env:
           TOKEN: ${{ secrets.PHOTOS_TOKEN }}
           REPO: ${{ github.repository_owner }}/photos
@@ -105,51 +111,19 @@ jobs:
           echo "PHOTOS_TOKEN expires $exp ($days days)"
           if [ "$days" -lt 30 ]; then echo "::warning::PHOTOS_TOKEN expires in $days days ($exp). Make a new token and replace the secret."; fi
 
-      - uses: actions/setup-node@v7
-        if: steps.has.outputs.token == 'true'
-        with:
-          node-version: 22
-          cache: npm
-
       - name: Prepare photos (strip metadata, cap size)
-        if: steps.has.outputs.token == 'true'
+        if: steps.photos.outputs.token == 'true'
         run: |
-          npm ci --no-audit --no-fund
           node engine/photos.mjs photos-src photos
+          rm -rf photos-src
 
-      - id: save
-        if: steps.has.outputs.token == 'true'
+      - name: Keep the prepared photos for preview builds
+        if: steps.photos.outputs.token == 'true'
         uses: actions/cache/save@v6
+        continue-on-error: true   # read-only in runs started by pull request events
         with:
           path: photos
-          key: ${{ steps.has.outputs.key }}
-
-  site:
-    needs: [plan, photos]
-    if: needs.plan.outputs.deploy == 'true' && needs.photos.result == 'success'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Restore photos
-        if: needs.photos.outputs.key != ''
-        uses: actions/cache/restore@v6
-        with:
-          path: photos
-          key: ${{ needs.photos.outputs.key }}
-          fail-on-cache-miss: true
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install
-        run: npm ci --no-audit --no-fund
+          key: photos-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Restore image cache
         uses: actions/cache@v6
@@ -180,8 +154,8 @@ jobs:
           retention-days: 1
 
   preview:
-    needs: [plan, photos]
-    if: needs.plan.outputs.builds != '[]' && needs.plan.outputs.builds != '' && needs.photos.result == 'success'
+    needs: [plan, site]
+    if: needs.plan.outputs.builds != '[]' && needs.plan.outputs.builds != '' && needs.site.result == 'success'
     name: "Preview PR #${{ matrix.pr.number }}"
     runs-on: ubuntu-latest
     permissions:
@@ -208,13 +182,12 @@ jobs:
           key: media-${{ hashFiles('media/**') }}
           restore-keys: media-
 
-      - name: Restore photos (prepared by the photos job; no token here)
-        if: needs.photos.outputs.key != ''
+      - name: Restore photos (prepared by a site build; no token here)
         uses: actions/cache/restore@v6
         with:
           path: photos
-          key: ${{ needs.photos.outputs.key }}
-          fail-on-cache-miss: true
+          key: photos-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: photos-
 
       - name: Check that this branch can build previews
         run: |
