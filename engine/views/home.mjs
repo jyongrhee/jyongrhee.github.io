@@ -273,9 +273,9 @@ function honors(ctx, prefix) {
 }
 
 /* ---------- activities | news ---------- */
-function rowsWithFold(rows, limit) {
+function rowsWithFold(rows, limit, total = rows.length) {
   if (rows.length <= limit) return rows.join('');
-  return rows.slice(0, limit).join('') + `<li class="fold" data-fold="${rows.length}"><ol class="fold__list">${rows.slice(limit).join('')}</ol></li>`;
+  return rows.slice(0, limit).join('') + `<li class="fold" data-fold="${total}"><ol class="fold__list">${rows.slice(limit).join('')}</ol></li>`;
 }
 
 function crew(ctx, prefix) {
@@ -288,9 +288,20 @@ function crew(ctx, prefix) {
   };
   const acts = c.activities.map((a) => row(a, pick(a.period, lang) || fmtDate(a.date, lang) || '—'));
   const certs = c.certificates.map((a) => row(a, fmtDate(a.date, lang)));
-  const news = c.newsFeed.map((n) => {
+  /* news: the newest item is a card with a large photo, the rest are rows with a small one */
+  const newsTitle = (n) => {
     const link = n.research ? ` <a class="ledger__go" href="research/${esc(n.research)}/">${g('right')}</a>` : '';
-    return `<li class="ledger__row"><time class="ledger__when" datetime="${esc(n.date)}">${esc(fmtDate(n.date, lang))}</time><div><p class="ledger__title">${n.kind === 'honor' ? g('laurel', 'inline') : ''}${esc(pick(n.title, lang))}${link}</p>${n.text ? `<p class="ledger__org">${esc(pick(n.text, lang))}</p>` : ''}</div></li>`;
+    return `${n.kind === 'honor' ? g('laurel', 'inline') : ''}${esc(pick(n.title, lang))}${link}`;
+  };
+  const newsPhoto = (n, cls, sizes) => {
+    const img = ctx.img(n.image);
+    return img ? `<button class="${cls}" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(n.title, lang))}">${picture(img, prefix, { alt: pick(n.title, lang), sizes })}</button>` : '';
+  };
+  const [lead, ...older] = c.newsFeed;
+  const leadCard = lead ? `<article class="lead">${newsPhoto(lead, 'lead__photo', '(max-width: 980px) 100vw, 40vw')}<div class="lead__body"><time class="ledger__when" datetime="${esc(lead.date)}">${esc(fmtDate(lead.date, lang))}</time><p class="lead__title">${newsTitle(lead)}</p>${lead.text ? `<p class="ledger__org">${esc(pick(lead.text, lang))}</p>` : ''}</div></article>` : '';
+  const news = older.map((n) => {
+    const photo = newsPhoto(n, 'ledger__photo', '120px');
+    return `<li class="ledger__row${photo ? ' ledger__row--photo' : ''}"><time class="ledger__when" datetime="${esc(n.date)}">${esc(fmtDate(n.date, lang))}</time><div><p class="ledger__title">${newsTitle(n)}</p>${n.text ? `<p class="ledger__org">${esc(pick(n.text, lang))}</p>` : ''}</div>${photo}</li>`;
   });
   return `<div class="hold hold--pair"><div class="beam pair">
   <section id="activities" aria-labelledby="h-activities">
@@ -299,8 +310,9 @@ function crew(ctx, prefix) {
     ${certs.length ? `<div class="sub"><h3 class="sub__title">${esc(t.certificates)}</h3><ol class="ledger">${certs.join('')}</ol></div>` : ''}
   </section>
   <section id="news" aria-labelledby="h-news">
-    ${head('news', t.nav.news, t.entries(news.length))}
-    <ol class="ledger ledger--news">${rowsWithFold(news, FOLD.news)}</ol>
+    ${head('news', t.nav.news, t.entries(c.newsFeed.length))}
+    ${leadCard}
+    ${news.length ? `<ol class="ledger ledger--news">${rowsWithFold(news, FOLD.news - 1, c.newsFeed.length)}</ol>` : ''}
   </section>
 </div></div>`;
 }

@@ -12,6 +12,22 @@ import { esc } from './text.mjs';
 
 const RASTER = /\.(jpe?g|png|webp|avif|heic|heif|tiff?)$/i;
 
+/** True when an EXIF block (as sharp's metadata().exif returns it) points to
+    GPS data: IFD0 holds tag 0x8825 (GPSInfo). */
+export function hasGps(exif) {
+  if (!exif || exif.length < 14) return false;
+  const o = exif.indexOf('Exif\0\0') === 0 ? 6 : 0;
+  const le = exif.toString('latin1', o, o + 2) === 'II';
+  const u16 = (i) => (le ? exif.readUInt16LE(i) : exif.readUInt16BE(i));
+  const u32 = (i) => (le ? exif.readUInt32LE(i) : exif.readUInt32BE(i));
+  try {
+    const ifd = o + u32(o + 4);
+    const n = u16(ifd);
+    for (let k = 0; k < n; k++) if (u16(ifd + 2 + k * 12) === 0x8825) return true;
+  } catch { /* malformed: treat as no GPS */ }
+  return false;
+}
+
 export class Media {
   constructor(root, out, report, { fast = false } = {}) {
     this.root = root; this.out = out; this.report = report; this.fast = fast;
@@ -49,7 +65,7 @@ export class Media {
     if (!RASTER.test(src)) { this.report.warn(src, 'unsupported image type'); return null; }
 
     const meta = await sharp(buf).metadata();
-    if (meta.exif && /GPS/.test(meta.exif.toString('latin1'))) this.gpsRemoved++;
+    if (hasGps(meta.exif)) this.gpsRemoved++;
     const upright = sharp(buf).rotate();
     const { width: W0, height: H0 } = await upright.clone().toBuffer({ resolveWithObject: true }).then((r) => r.info);
     const ws = [...new Set(widths.map((w) => Math.min(w, W0)))].sort((a, b) => a - b);
