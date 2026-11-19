@@ -254,11 +254,11 @@ function rowsWithFold(rows, limit, total = rows.length) {
 
 function crew(ctx, prefix) {
   const { c, lang } = ctx; const t = UI[lang];
-  /* an activity or certificate with a photo gets a small picture at the end of its row; click to enlarge */
+  /* an activity or certificate with a photo gets a portrait document picture at the end of its row; click to enlarge */
   const row = (a, when) => {
     const img = ctx.img(a.image);
-    const photo = img ? `<button class="ledger__photo" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(a.title, lang))}">${picture(img, prefix, { alt: pick(a.title, lang), sizes: '120px' })}</button>` : '';
-    return `<li class="ledger__row${img ? ' ledger__row--photo' : ''}"><span class="ledger__when">${esc(when)}</span><div><p class="ledger__title">${esc(pick(a.title, lang))}</p><p class="ledger__org">${esc(pick(a.org, lang))}</p></div>${photo}</li>`;
+    const photo = img ? `<button class="ledger__photo ledger__photo--doc" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(a.title, lang))}">${picture(img, prefix, { alt: pick(a.title, lang), sizes: '(max-width: 560px) 180px, 128px' })}</button>` : '';
+    return `<li class="ledger__row${img ? ' ledger__row--photo ledger__row--doc' : ''}"><span class="ledger__when">${esc(when)}</span><div><p class="ledger__title">${esc(pick(a.title, lang))}</p><p class="ledger__org">${esc(pick(a.org, lang))}</p></div>${photo}</li>`;
   };
   const acts = c.activities.map((a) => row(a, pick(a.period, lang) || fmtDate(a.date, lang) || '—'));
   const certs = c.certificates.map((a) => row(a, fmtDate(a.date, lang)));
