@@ -141,17 +141,17 @@
   {
     "id": "2025-kldf-scholar",
     "type": "scholarship",
-    "date": "2025",
+    "date": "2025-02",
     "period": {
       "en": "2025 – graduation",
       "ko": "2025 – 졸업"
     },
     "title": {
-      "en": "Korea Leadership Development Scholar (Full Scholarship)",
-      "ko": "한국지도자육성장학재단 장학생 (전액)"
+      "en": "Scholar, Korea Scholarship Foundation for the Future Leaders (Full Tuition + Living Allowance)",
+      "ko": "한국지도자육성장학재단 장학생 (등록금 전액 + 생활비)"
     },
     "org": {
-      "en": "Korea Leadership Development Foundation",
+      "en": "Korea Scholarship Foundation for the Future Leaders",
       "ko": "한국지도자육성장학재단"
     },
     "image": ""
