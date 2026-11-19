@@ -2,14 +2,14 @@
   {
     "id": "youth-advisory-committee",
     "type": "activity",
-    "date": "",
+    "date": "2026-04",
     "period": {
-      "en": "",
-      "ko": ""
+      "en": "2026 – 2027",
+      "ko": "2026 – 2027"
     },
     "title": {
-      "en": "Member, 2030 Youth Advisory Committee",
-      "ko": "2030 청년자문단 위원"
+      "en": "Member, 3rd Ministry of Oceans and Fisheries 2030 Youth Advisory Committee",
+      "ko": "제3기 해양수산부 2030 청년자문단"
     },
     "org": {
       "en": "Ministry of Oceans and Fisheries",
@@ -108,12 +108,30 @@
     "image": ""
   },
   {
+    "id": "2025-04-kb-mentor",
+    "type": "activity",
+    "date": "2025-04",
+    "period": {
+      "en": "2025 – 2026",
+      "ko": "2025 – 2026"
+    },
+    "title": {
+      "en": "Mentor, KB Dream Wave 2030 KB Ra School",
+      "ko": "KB 라스쿨 멘토 (KB Dream Wave 2030)"
+    },
+    "org": {
+      "en": "KB Kookmin Bank",
+      "ko": "KB국민은행"
+    },
+    "image": ""
+  },
+  {
     "id": "2024-03-kb-mentor",
     "type": "activity",
     "date": "2024-03",
     "period": {
-      "en": "2024 – 2026",
-      "ko": "2024 – 2026"
+      "en": "2024 – 2025",
+      "ko": "2024 – 2025"
     },
     "title": {
       "en": "Mentor, KB Dream Wave 2030 KB Ra School",
