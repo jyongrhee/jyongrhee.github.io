@@ -198,31 +198,6 @@ function research(ctx, prefix) {
 }
 
 /* ---------- honors (bento) ---------- */
-/* Bento widths for a 4-column grid that keep date order and leave no holes.
-   Grand/top awards want 2 columns. When a wide tile does not fit in the row,
-   the previous small tile grows instead (grand/top) or the tile shrinks. */
-function spans(items) {
-  const rank = { grand: 4, top: 3, excellence: 2, honor: 1 };
-  const want = items.map((h) => (h.type === 'award' && rank[h.tier] >= 2 ? 2 : 1));
-  const s = []; let row = [];
-  const left = () => 4 - row.reduce((a, i) => a + s[i], 0);
-  items.forEach((h, i) => {
-    let w = want[i];
-    if (w > left()) {
-      const prev = row.filter((k) => s[k] === 1).at(-1);
-      if (rank[h.tier] >= 3 && prev != null) { s[prev] += left(); row = []; }
-      else w = left();
-    }
-    s[i] = w; row.push(i);
-    if (left() === 0) row = [];
-  });
-  if (row.length && left() > 0) {
-    const best = [...row].sort((a, b) => (rank[items[b].tier] || 0) - (rank[items[a].tier] || 0))[0];
-    s[best] += left();
-  }
-  return s;
-}
-
 function medal(ctx, h, span, prefix) {
   const { lang } = ctx; const t = UI[lang];
   const img = ctx.img(h.image);
@@ -251,8 +226,7 @@ function medal(ctx, h, span, prefix) {
 function honors(ctx, prefix) {
   const { c, lang } = ctx; const t = UI[lang];
   const panel = (key, items) => {
-    const sp = spans(items);
-    const tiles = items.map((h, i) => medal(ctx, h, sp[i], prefix));
+    const tiles = items.map((h) => medal(ctx, h, 1, prefix)); // every tile the same size; the tier badge carries the rank
     const shown = tiles.slice(0, FOLD.honors).join('');
     const rest = tiles.slice(FOLD.honors).join('');
     return `<div class="bento" id="panel-${key}" role="tabpanel" aria-labelledby="tab-${key}"${key === 'scholarships' ? ' data-later' : ''}>
