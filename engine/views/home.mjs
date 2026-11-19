@@ -257,7 +257,7 @@ function crew(ctx, prefix) {
   /* an activity or certificate with a photo gets a portrait document picture at the end of its row; click to enlarge */
   const row = (a, when) => {
     const img = ctx.img(a.image);
-    const photo = img ? `<button class="ledger__photo ledger__photo--doc" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(a.title, lang))}">${picture(img, prefix, { alt: pick(a.title, lang), sizes: '(max-width: 560px) 180px, 128px' })}</button>` : '';
+    const photo = img ? `<button class="ledger__photo ledger__photo--doc" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(a.title, lang))}">${picture(img, prefix, { alt: pick(a.title, lang), sizes: '(max-width: 560px) 180px, 160px' })}</button>` : '';
     return `<li class="ledger__row${img ? ' ledger__row--photo ledger__row--doc' : ''}"><span class="ledger__when">${esc(when)}</span><div><p class="ledger__title">${esc(pick(a.title, lang))}</p><p class="ledger__org">${esc(pick(a.org, lang))}</p></div>${photo}</li>`;
   };
   const acts = c.activities.map((a) => row(a, pick(a.period, lang) || fmtDate(a.date, lang) || '—'));
@@ -274,7 +274,7 @@ function crew(ctx, prefix) {
   const [lead, ...older] = c.newsFeed;
   const leadCard = lead ? `<article class="lead">${newsPhoto(lead, 'lead__photo', '(max-width: 980px) 100vw, 40vw')}<div class="lead__body"><time class="ledger__when" datetime="${esc(lead.date)}">${esc(fmtDate(lead.date, lang))}</time><p class="lead__title">${newsTitle(lead)}</p>${lead.text ? `<p class="ledger__org">${esc(pick(lead.text, lang))}</p>` : ''}</div></article>` : '';
   const news = older.map((n) => {
-    const photo = newsPhoto(n, 'ledger__photo', '120px');
+    const photo = newsPhoto(n, 'ledger__photo', '(max-width: 560px) 120px, 160px');
     return `<li class="ledger__row${photo ? ' ledger__row--photo' : ''}"><time class="ledger__when" datetime="${esc(n.date)}">${esc(fmtDate(n.date, lang))}</time><div><p class="ledger__title">${newsTitle(n)}</p>${n.text ? `<p class="ledger__org">${esc(pick(n.text, lang))}</p>` : ''}</div>${photo}</li>`;
   });
   return `<div class="hold hold--pair"><div class="beam pair">
