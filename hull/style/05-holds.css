@@ -141,9 +141,9 @@
 .ledger__photo:hover { border-color: var(--accent-line); }
 .ledger__photo picture, .ledger__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .ledger__photo img { padding: 3px; }
-/* activities and certificates: portrait documents, so a taller, wider box */
-.ledger__row--doc { grid-template-columns: 132px minmax(0, 1fr) 128px; }
-.ledger__photo--doc { width: 128px; aspect-ratio: 3 / 4; }
+/* activities and certificates: portrait documents, same 160 x 200 box as the news photos */
+.ledger__row--doc { grid-template-columns: 132px minmax(0, 1fr) 160px; }
+.ledger__photo--doc { width: 160px; aspect-ratio: 4 / 5; }
 /* news: the newest item as a card */
 .lead { margin-bottom: 8px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface); overflow: hidden; }
 .lead__photo { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; background: var(--surface-2); border-bottom: 1px solid var(--line); cursor: zoom-in; }

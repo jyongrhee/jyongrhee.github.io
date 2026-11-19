@@ -257,7 +257,7 @@ function crew(ctx, prefix) {
   /* an activity or certificate with a photo gets a portrait document picture at the end of its row; click to enlarge */
   const row = (a, when) => {
     const img = ctx.img(a.image);
-    const photo = img ? `<button class="ledger__photo ledger__photo--doc" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(a.title, lang))}">${picture(img, prefix, { alt: pick(a.title, lang), sizes: '(max-width: 560px) 180px, 128px' })}</button>` : '';
+    const photo = img ? `<button class="ledger__photo ledger__photo--doc" type="button" data-loupe="${prefix}${img.fallback}" data-cap="${esc(pick(a.title, lang))}">${picture(img, prefix, { alt: pick(a.title, lang), sizes: '(max-width: 560px) 180px, 160px' })}</button>` : '';
     return `<li class="ledger__row${img ? ' ledger__row--photo ledger__row--doc' : ''}"><span class="ledger__when">${esc(when)}</span><div><p class="ledger__title">${esc(pick(a.title, lang))}</p><p class="ledger__org">${esc(pick(a.org, lang))}</p></div>${photo}</li>`;
   };
   const acts = c.activities.map((a) => row(a, pick(a.period, lang) || fmtDate(a.date, lang) || '—'));
