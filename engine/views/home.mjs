@@ -274,7 +274,7 @@ function crew(ctx, prefix) {
   const [lead, ...older] = c.newsFeed;
   const leadCard = lead ? `<article class="lead">${newsPhoto(lead, 'lead__photo', '(max-width: 980px) 100vw, 40vw')}<div class="lead__body"><time class="ledger__when" datetime="${esc(lead.date)}">${esc(fmtDate(lead.date, lang))}</time><p class="lead__title">${newsTitle(lead)}</p>${lead.text ? `<p class="ledger__org">${esc(pick(lead.text, lang))}</p>` : ''}</div></article>` : '';
   const news = older.map((n) => {
-    const photo = newsPhoto(n, 'ledger__photo', '(max-width: 560px) 96px, 128px');
+    const photo = newsPhoto(n, 'ledger__photo', '(max-width: 560px) 120px, 160px');
     return `<li class="ledger__row${photo ? ' ledger__row--photo' : ''}"><time class="ledger__when" datetime="${esc(n.date)}">${esc(fmtDate(n.date, lang))}</time><div><p class="ledger__title">${newsTitle(n)}</p>${n.text ? `<p class="ledger__org">${esc(pick(n.text, lang))}</p>` : ''}</div>${photo}</li>`;
   });
   return `<div class="hold hold--pair"><div class="beam pair">

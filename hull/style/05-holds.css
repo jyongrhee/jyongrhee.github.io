@@ -157,8 +157,8 @@
 .ledger--news .ledger__row { grid-template-columns: minmax(0, 1fr); gap: 6px 18px; padding: 16px 18px 17px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface); transition: border-color var(--t1) var(--ease); }
 .ledger--news > .ledger__row:first-child { padding-top: 16px; }
 .ledger--news .ledger__row:hover { border-color: var(--line-2); }
-.ledger--news .ledger__row--photo { grid-template-columns: minmax(0, 1fr) 128px; grid-template-rows: auto 1fr; }
-.ledger--news .ledger__row--photo .ledger__photo { grid-column: 2; grid-row: 1 / span 2; width: 128px; aspect-ratio: 1; }
+.ledger--news .ledger__row--photo { grid-template-columns: minmax(0, 1fr) 160px; grid-template-rows: auto 1fr; }
+.ledger--news .ledger__row--photo .ledger__photo { grid-column: 2; grid-row: 1 / span 2; width: 160px; aspect-ratio: 4 / 5; }
 .ledger--news .ledger__when { padding-top: 0; }
 .ledger--news .ledger__org { margin-top: 5px; line-height: 1.55; }
 .ledger__go { display: inline-flex; vertical-align: -3px; color: var(--accent-ink); }
@@ -179,7 +179,7 @@
 .pair { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(44px, 6vw, 104px); }
 .pair > section { min-width: 0; scroll-margin-top: calc(var(--bridge-h) + 24px); }
 @media (max-width: 980px) { .pair { grid-template-columns: 1fr; } }
-@media (max-width: 560px) { .ledger__row, .ledger__row--photo, .paper { grid-template-columns: 1fr; gap: 4px; } .ledger__photo { width: 144px; margin-top: 8px; } .ledger__row--doc { grid-template-columns: 1fr; } .ledger__photo--doc { width: 180px; } .ledger--news .ledger__row--photo { grid-template-columns: minmax(0, 1fr) 96px; } .ledger--news .ledger__row--photo .ledger__photo { width: 96px; margin-top: 0; } }
+@media (max-width: 560px) { .ledger__row, .ledger__row--photo, .paper { grid-template-columns: 1fr; gap: 4px; } .ledger__photo { width: 144px; margin-top: 8px; } .ledger__row--doc { grid-template-columns: 1fr; } .ledger__photo--doc { width: 180px; } .ledger--news .ledger__row--photo { grid-template-columns: minmax(0, 1fr) 120px; } .ledger--news .ledger__row--photo .ledger__photo { width: 120px; margin-top: 0; } }
 
 /* ---------- honors (bento) ---------- */
 .tabs { position: relative; display: flex; gap: 4px; margin: -8px 0 22px; border-bottom: 1px solid var(--line); }
