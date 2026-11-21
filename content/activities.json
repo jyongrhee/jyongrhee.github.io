@@ -54,42 +54,6 @@
     "image": ""
   },
   {
-    "id": "2025-academic-mentoring",
-    "type": "activity",
-    "date": "2025",
-    "period": {
-      "en": "2025",
-      "ko": "2025"
-    },
-    "title": {
-      "en": "Oral Presenter, Academic Mentoring Program (Wave Dynamics / Structure Session)",
-      "ko": "학술 멘토링 프로그램 구두발표 (파랑역학·구조 세션)"
-    },
-    "org": {
-      "en": "Pukyong National University",
-      "ko": "국립부경대학교"
-    },
-    "image": ""
-  },
-  {
-    "id": "2025-07-unlv-presentation",
-    "type": "activity",
-    "date": "2025-07",
-    "period": {
-      "en": "Jul 2025",
-      "ko": "2025.07"
-    },
-    "title": {
-      "en": "Oral Presenter, “Experimental Study on the Flexural Behavior of a Cantilever Beam”",
-      "ko": "구두발표, “캔틸레버 보의 휨 거동 실험 연구”"
-    },
-    "org": {
-      "en": "UNLV Program Presentation, University of Nevada, Las Vegas",
-      "ko": "UNLV 프로그램 발표회, 네바다 주립대 라스베이거스"
-    },
-    "image": ""
-  },
-  {
     "id": "2025-06-unlv-visiting",
     "type": "activity",
     "date": "2025-06",
